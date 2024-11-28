@@ -1,0 +1,19 @@
+app_name: OnlineQuestionnaire
+debug: true
+server:
+  host: localhost
+  port: 8080
+DB:
+  user: root
+  password: root
+  dbname: OnlineQuestionnaire
+#  host: localhost
+  host: OnlineQuestionnaire_postgress
+  port: 1235
+  sslmode: disable
+
+
+
+
+
+
