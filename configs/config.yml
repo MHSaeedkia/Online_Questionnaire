@@ -7,9 +7,8 @@ DB:
   user: root
   password: root
   dbname: OnlineQuestionnaire
-#  host: localhost
-  host: OnlineQuestionnaire_postgress
-  port: 1235
+  host: localhost
+  port: 5432
   sslmode: disable
 
 

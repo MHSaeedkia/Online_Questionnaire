@@ -21,7 +21,7 @@ type User struct {
 	Questionnaires []*Questionnaire `gorm:"foreignKey:OwnerID" json:"questionnaires"`
 	Permissions    []Permission     `gorm:"many2many:user_permissions;" json:"permissions"`
 	Notifications  []Notification   `gorm:"foreignKey:UserID" json:"notifications"`
-	//Responses   []*Response  `gorm:"foreignKey:QuestionnaireID"`
+	Responses      []*Response      `gorm:"foreignKey:QuestionnaireID"`
 }
 
 type Role string
@@ -43,8 +43,8 @@ type Questionnaire struct {
 	ResponseTime     int            `gorm:"default:0" json:"response_time"`
 	AnonymityLevel   AnonymityLevel `gorm:"not null;default:'Invisible'"`
 
-	//OwnerID uint `json:"owner_id"`
-	Owner User `gorm:"foreignKey:OwnerID" json:"owner"`
+	OwnerID uint `json:"owner_id"`
+	Owner   User `gorm:"foreignKey:OwnerID" json:"owner"`
 
 	// Relationships
 	Permissions []Permission `gorm:"many2many:questionnaire_permissions;" json:"permissions"`

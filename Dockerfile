@@ -12,7 +12,7 @@ WORKDIR /app
 
 # Copy application files
 COPY . .
-COPY .env .
+COPY .env-example .
 
 # Setup Go environment
 RUN go env -w GO111MODULE=on
