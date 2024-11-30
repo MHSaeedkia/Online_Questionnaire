@@ -50,9 +50,9 @@ type Questionnaire struct {
 	Permissions []Permission `gorm:"many2many:questionnaire_permissions;" json:"permissions"`
 	Questions   []*Question  `gorm:"foreignKey:QuestionnaireID"`
 
-	AgeRestriction      int    `json:"age_restriction"`
-	LocationRestriction string `json:"location_restriction"`
-	GenderRestriction   string `json:"gender_restriction"`
+	AgeRestriction      *int    `json:"age_restriction"`
+	LocationRestriction *string `json:"location_restriction"`
+	GenderRestriction   *string `json:"gender_restriction"`
 
 	WithdrawalDeadline time.Time `json:"withdrawal_deadline"`
 }
