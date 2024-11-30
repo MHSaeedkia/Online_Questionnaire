@@ -1,0 +1,22 @@
+info:
+  contact: {}
+  description: This is a sample server celler server.
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /version:
+    get:
+      consumes:
+      - application/json
+      description: Returns the version of the API
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Get version of the API
+      tags:
+      - version
+swagger: "2.0"
