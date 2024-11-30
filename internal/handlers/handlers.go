@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"os"
 )
@@ -18,6 +19,7 @@ import (
 // @Success		200	{string}	string	"ok"
 // @Router			/version [get]
 func GetVersion(c *fiber.Ctx) error {
+	fmt.Println("Getting version!.....")
 	version := os.Getenv("PROJECT_VERSION")
 	if version == "" {
 		version = "1.0.0"

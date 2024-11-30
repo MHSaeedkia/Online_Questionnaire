@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a sample server celler server.",
-        "title": "Swagger Example API",
+        "description": "Questionnaire Management System API",
+        "title": "online Questionnaire",
         "contact": {},
         "version": "1.0"
     },
