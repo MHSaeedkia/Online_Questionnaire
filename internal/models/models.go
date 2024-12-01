@@ -41,7 +41,7 @@ type Questionnaire struct {
 	AllowReturn      bool           `gorm:"default:true" json:"allow_return"`
 	MaxParticipation int            `gorm:"default:0" json:"max_participation"`
 	ResponseTime     int            `gorm:"default:0" json:"response_time"`
-	AnonymityLevel   AnonymityLevel `gorm:"not null;default:'Invisible'"`
+	AnonymityLevel   AnonymityLevel `gorm:"not null;default:'Invisible'" json:"anonymity_level"`
 
 	OwnerID uint `json:"owner_id"`
 	Owner   User `gorm:"foreignKey:OwnerID" json:"owner"`

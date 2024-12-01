@@ -26,8 +26,10 @@ func SetupRoutes(app *fiber.App) {
 	questionnaireRepo := repositories.NewQuestionnaireRepository(DB)
 	questionnaireHandler := handlers.NewQuestionnaireHandler(questionnaireRepo)
 
-	api := app.Group("/api")
+	api := app.Group("/api/v1")
 	questionnaireRoutes := api.Group("/questionnaires")
 
-	questionnaireRoutes.Post("/", questionnaireHandler.CreateQuestionnaire)
+	questionnaireRoutes.Post("/questionnaire", questionnaireHandler.CreateQuestionnaire)
+	questionnaireRoutes.Post("/question", questionnaireHandler.CreateQuestion)
+	questionnaireRoutes.Post("/answer", questionnaireHandler.CreateAnswer)
 }

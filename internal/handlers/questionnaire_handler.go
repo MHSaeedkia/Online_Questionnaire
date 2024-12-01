@@ -18,6 +18,7 @@ func NewQuestionnaireHandler(repo repositories.QuestionnaireRepository) *Questio
 
 func (h *QuestionnaireHandler) CreateQuestionnaire(c *fiber.Ctx) error {
 	var req models.Questionnaire
+
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
@@ -31,4 +32,32 @@ func (h *QuestionnaireHandler) CreateQuestionnaire(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Questionnaire created successfully", "data": req})
+}
+
+func (h *QuestionnaireHandler) CreateQuestion(c *fiber.Ctx) error {
+	var req models.Question
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	// Call repository to create
+	if err := h.repo.CreateQuestion(&req); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to create question"})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Question created successfully", "data": req})
+}
+
+func (h *QuestionnaireHandler) CreateAnswer(c *fiber.Ctx) error {
+	var req models.Response
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	// Call repository to create
+	if err := h.repo.CreateAnswer(&req); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to create answer"})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Answer created successfully", "data": req})
 }
