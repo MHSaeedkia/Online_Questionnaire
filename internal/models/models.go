@@ -37,7 +37,7 @@ type Questionnaire struct {
 	CreationTime     time.Time      `gorm:"autoCreateTime" json:"creation_time"`
 	StartTime        time.Time      `json:"start_time"`
 	EndTime          time.Time      `json:"end_time"`
-	OrderType        OrderType      `gorm:"not null;default:'Sequential'"`
+	OrderType        OrderType      `gorm:"not null;default:'Sequential'" json:"order_type"`
 	AllowReturn      bool           `gorm:"default:true" json:"allow_return"`
 	MaxParticipation int            `gorm:"default:0" json:"max_participation"`
 	ResponseTime     int            `gorm:"default:0" json:"response_time"`

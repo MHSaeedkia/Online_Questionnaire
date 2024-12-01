@@ -1,15 +1,29 @@
 package routers
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
+	"log"
+	config "online-questionnaire/configs"
+	"online-questionnaire/internal/db"
 	"online-questionnaire/internal/handlers"
 	"online-questionnaire/internal/repositories"
 )
 
-func SetupRoutes(db gorm.DB, app *fiber.App) {
+func SetupRoutes(app *fiber.App) {
+	cfg, err := config.LoadConfig("./configs/")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	questionnaireRepo := repositories.NewQuestionnaireRepository(&db)
+	//database connect
+	DB, err := db.NewConnection(&cfg.Database)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(DB, "is connected successfully")
+
+	questionnaireRepo := repositories.NewQuestionnaireRepository(DB)
 	questionnaireHandler := handlers.NewQuestionnaireHandler(questionnaireRepo)
 
 	api := app.Group("/api")
