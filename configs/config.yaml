@@ -1,0 +1,20 @@
+app_name: OnlineQuestionnaire
+debug: true
+server:
+  host: localhost
+  port: 8080
+DB:
+  user: root
+  password: root
+  dbname: OnlineQuestionnaire
+  host: localhost
+  port: 1235
+  sslmode: disable
+jwt:
+  secret: ""
+  expiration: 5 #minutes
+
+
+
+
+
