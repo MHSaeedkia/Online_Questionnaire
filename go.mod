@@ -3,6 +3,7 @@ module online-questionnaire
 go 1.23.3
 
 require (
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/spf13/viper v1.19.0
 	gorm.io/driver/postgres v1.5.10
 	gorm.io/gorm v1.25.12

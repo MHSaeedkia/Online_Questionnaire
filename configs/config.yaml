@@ -8,9 +8,11 @@ DB:
   password: root
   dbname: OnlineQuestionnaire
   host: localhost
-  port: 5432
+  port: 1235
   sslmode: disable
-
+jwt:
+  secret: ""
+  expiration: 5 #minutes
 
 
 

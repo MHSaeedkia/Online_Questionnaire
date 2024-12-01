@@ -12,6 +12,7 @@ type Config struct {
 	Debug    bool           `mapstructure:"debug"`
 	Server   ServerConfig   `mapstructure:"server"`
 	Database DatabaseConfig `mapstructure:"DB"`
+	JWT      JWTConfig      `mapstructure:"jwt"`
 }
 
 func LoadConfig(path string) (Config, error) {
@@ -41,7 +42,7 @@ func LoadConfig(path string) (Config, error) {
 		return config, fmt.Errorf("unable to decode into struct: %w", err)
 	}
 
-	fmt.Printf("Loaded Config: %+v\n", config)
+	// fmt.Printf("Loaded Config: %+v\n", config)
 	return config, nil
 }
 
@@ -57,4 +58,8 @@ type DatabaseConfig struct {
 	Host     string `mapstructure:"host"`
 	Port     string `mapstructure:"port"`
 	SSLMode  string `mapstructure:"sslmode"`
+}
+type JWTConfig struct {
+	Secret     string `mapstructure:"secret"`
+	Expiration int64  `mapstructure:"expiration"`
 }
