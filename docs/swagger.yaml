@@ -1,22 +1,291 @@
+definitions:
+  models.AnonymityLevel:
+    enum:
+    - All
+    - CreatorOrAdmin
+    - Invisible
+    type: string
+    x-enum-varnames:
+    - VisibleToAll
+    - CreatorOrAdmin
+    - Invisible
+  models.ConditionalLogic:
+    properties:
+      id:
+        type: integer
+      option_id:
+        description: Option that triggers this condition
+        type: integer
+      question_id:
+        description: The question this condition belongs to
+        type: integer
+      target_question_id:
+        description: Question to be shown if the condition is met
+        type: integer
+    type: object
+  models.Name:
+    enum:
+    - CanView
+    - CanViewVote
+    - CanVote
+    - CanEdit
+    - CanChangeRole
+    - CanViewReports
+    type: string
+    x-enum-varnames:
+    - CanView
+    - CanViewVote
+    - CanVote
+    - CanEdit
+    - CanChangeRole
+    - CanViewReports
+  models.Notification:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      is_read:
+        type: boolean
+      message:
+        description: Detailed message
+        type: string
+      title:
+        description: Notification title
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.Option:
+    properties:
+      id:
+        type: integer
+      is_correct:
+        type: boolean
+      question_id:
+        type: integer
+      text:
+        type: string
+    type: object
+  models.OrderType:
+    enum:
+    - Sequential
+    - Random
+    type: string
+    x-enum-varnames:
+    - Sequential
+    - Random
+  models.Permission:
+    properties:
+      id:
+        type: integer
+      name:
+        $ref: '#/definitions/models.Name'
+      questionnaires:
+        items:
+          $ref: '#/definitions/models.Questionnaire'
+        type: array
+      users:
+        description: Relationships
+        items:
+          $ref: '#/definitions/models.User'
+        type: array
+    type: object
+  models.Question:
+    properties:
+      conditional_logic:
+        description: One-to-One or One-to-Many relationship with ConditionalLogic
+        items:
+          $ref: '#/definitions/models.ConditionalLogic'
+        type: array
+      correct_option_id:
+        description: If it has a correct option, store its ID
+        type: integer
+      has_correct_option:
+        type: boolean
+      id:
+        type: integer
+      media:
+        description: URL or path of image, video, audio, or file (optional)
+        type: string
+      options:
+        items:
+          $ref: '#/definitions/models.Option'
+        type: array
+      order:
+        description: Position in sequential order
+        type: integer
+      questionnaire_id:
+        type: integer
+      text:
+        type: string
+      type:
+        $ref: '#/definitions/models.Type'
+    type: object
+  models.Questionnaire:
+    properties:
+      age_restriction:
+        type: integer
+      allow_return:
+        type: boolean
+      anonymityLevel:
+        $ref: '#/definitions/models.AnonymityLevel'
+      creation_time:
+        type: string
+      end_time:
+        type: string
+      gender_restriction:
+        type: string
+      id:
+        type: integer
+      location_restriction:
+        type: string
+      max_participation:
+        type: integer
+      orderType:
+        $ref: '#/definitions/models.OrderType'
+      owner:
+        $ref: '#/definitions/models.User'
+      owner_id:
+        type: integer
+      permissions:
+        description: Relationships
+        items:
+          $ref: '#/definitions/models.Permission'
+        type: array
+      questions:
+        items:
+          $ref: '#/definitions/models.Question'
+        type: array
+      response_time:
+        type: integer
+      start_time:
+        type: string
+      title:
+        type: string
+      withdrawal_deadline:
+        type: string
+    type: object
+  models.Response:
+    properties:
+      answer:
+        description: User's answer (encrypted)
+        type: string
+      id:
+        type: integer
+      is_withdrawn:
+        type: boolean
+      question_id:
+        type: integer
+      questionnaire_id:
+        type: integer
+      secret:
+        description: Unique secret for each vote
+        type: string
+      submitted_at:
+        type: string
+      user_id:
+        description: Who submitted the response
+        type: integer
+    type: object
+  models.Role:
+    enum:
+    - SuperAdmin
+    - User
+    type: string
+    x-enum-varnames:
+    - SuperAdmin
+    - Guest
+  models.Type:
+    enum:
+    - MultipleChoice
+    - Descriptive
+    type: string
+    x-enum-varnames:
+    - MultipleChoice
+    - Descriptive
+  models.User:
+    properties:
+      city:
+        type: string
+      created_at:
+        type: string
+      date_of_birth:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      gender:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      national_id:
+        type: string
+      notifications:
+        items:
+          $ref: '#/definitions/models.Notification'
+        type: array
+      permissions:
+        items:
+          $ref: '#/definitions/models.Permission'
+        type: array
+      questionnaires:
+        description: Relationships
+        items:
+          $ref: '#/definitions/models.Questionnaire'
+        type: array
+      responses:
+        items:
+          $ref: '#/definitions/models.Response'
+        type: array
+      role:
+        $ref: '#/definitions/models.Role'
+      updated_at:
+        type: string
+      wallet_balance:
+        type: number
+    type: object
 info:
   contact: {}
   description: Questionnaire Management System API
   title: online Questionnaire
   version: "1.0"
 paths:
-  /version:
-    get:
+  /api/user/signup:
+    post:
       consumes:
       - application/json
-      description: Returns the version of the API
+      description: Register a new user by providing email, national ID, password,
+        and other optional details.
+      parameters:
+      - description: User Signup Request
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
       produces:
       - application/json
       responses:
-        "200":
-          description: ok
+        "201":
+          description: User created successfully with a JWT token
           schema:
-            type: string
-      summary: Get version of the API
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request payload
+          schema:
+            additionalProperties: true
+            type: object
+        "409":
+          description: User already exists with this email or national ID
+          schema:
+            additionalProperties: true
+            type: object
+      summary: User Signup
       tags:
-      - version
+      - User
 swagger: "2.0"

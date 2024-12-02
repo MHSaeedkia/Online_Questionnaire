@@ -12,6 +12,12 @@ DB:
   sslmode: disable
 
 
+jwt:
+  secret: ""
+  expiration: 5 #minutes
+
+
+
 
 
 

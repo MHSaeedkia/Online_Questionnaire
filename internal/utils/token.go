@@ -1,30 +1,54 @@
 package utils
 
 import (
+	config "online-questionnaire/configs"
+	"time"
+
 	"github.com/golang-jwt/jwt/v5"
-	"os"
 )
 
-func GenerateToken(id uint) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": id,
-	})
+// written by hamed maleki
 
-	t, err := token.SignedString(os.Getenv("JWT_SECRET"))
-	if err != nil {
-		return "", err
+func GenerateJWTToken(username, role string, cfg config.Config) (TokenData, error) {
+	secret := []byte(cfg.JWT.Secret)
+	expireAt := time.Now().Add(time.Minute * time.Duration(cfg.JWT.Expiration))
+	claims := CustomClaims{
+		Username: username,
+		Role:     role,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expireAt),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			Issuer:    "online-questionnaire",
+		},
 	}
 
-	return t, nil
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(secret)
+	if err != nil {
+		return TokenData{}, err
+	}
+
+	return TokenData{
+		Token:     tokenString,
+		Username:  username,
+		Role:      role,
+		IssuedAt:  time.Now(),
+		ExpiresAt: expireAt,
+		Issuer:    "online-questionnaire",
+	}, nil
 }
 
-func VerifyToken(tokenString string) (bool, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("JWT_SECRET")), nil
-	})
-	if err != nil {
-		return false, err
-	}
+type CustomClaims struct {
+	Username string `json:"username"`
+	Role     string `json:"role"`
+	jwt.RegisteredClaims
+}
 
-	return token.Valid, nil
+type TokenData struct {
+	Token     string
+	Username  string
+	Role      string
+	IssuedAt  time.Time
+	ExpiresAt time.Time
+	Issuer    string
 }

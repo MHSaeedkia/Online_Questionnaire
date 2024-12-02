@@ -2,34 +2,44 @@ package handlers
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"net/http"
 	"online-questionnaire/internal/models"
-	"online-questionnaire/internal/repositories"
-	"online-questionnaire/internal/utils"
+	"online-questionnaire/internal/services"
 )
 
-type authRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+type UserHandler struct {
+	UserService *services.UserService
 }
 
-func Register(c *fiber.Ctx) error {
-	var req authRequest
-	if err := c.BodyParser(&req); err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"message": err.Error(),
-		})
+func NewUserHandler(service *services.UserService) *UserHandler {
+	return &UserHandler{UserService: service}
+}
+
+// Signup godoc
+//
+//	@Summary		User Signup
+//	@Description	Register a new user by providing email, national ID, password, and other optional details.
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Param			user	body		models.User				true	"User Signup Request"
+//	@Success		201		{object}	map[string]interface{}	"User created successfully with a JWT token"
+//	@Failure		400		{object}	map[string]interface{}	"Invalid request payload"
+//	@Failure		409		{object}	map[string]interface{}	"User already exists with this email or national ID"
+//	@Router			/api/user/signup [post]
+func (h *UserHandler) Signup(c *fiber.Ctx) error {
+	var user models.User
+	if err := c.BodyParser(&user); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
-	user := models.User{
-		Email:    req.Email,
-		Password: utils.GeneratePassword(req.Password),
+
+	token, registerErr := h.UserService.SignUp(&user)
+	if registerErr != nil {
+		return fiber.NewError(fiber.StatusConflict, registerErr.Error())
 	}
-	res := repositories.UserRepository{}.SaveUser(*user)
-	if res.Error != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"message": res.Error.Error(),
-		})
-	}
-	return c.Status(201).JSON(fiber.Map{
-		"message": "user created",
+
+	return c.Status(http.StatusCreated).JSON(fiber.Map{
+		"message": "User created successfully",
+		"token":   token,
 	})
 }
