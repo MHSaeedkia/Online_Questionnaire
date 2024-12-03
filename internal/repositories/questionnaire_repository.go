@@ -1,8 +1,9 @@
 package repositories
 
 import (
-	"gorm.io/gorm"
 	"online-questionnaire/internal/models"
+
+	"gorm.io/gorm"
 )
 
 type QuestionnaireRepository interface {

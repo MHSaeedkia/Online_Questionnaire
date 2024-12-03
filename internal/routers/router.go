@@ -2,15 +2,15 @@ package routers
 
 import (
 	"fmt"
-	"github.com/gofiber/fiber/v2"
 	"log"
 	config "online-questionnaire/configs"
 	"online-questionnaire/internal/db"
-	"online-questionnaire/internal/handlers"
-	"online-questionnaire/internal/repositories"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func SetupRoutes(app *fiber.App) {
+	// get config .
 	cfg, err := config.LoadConfig("./configs/")
 	if err != nil {
 		log.Fatal(err)
@@ -23,13 +23,16 @@ func SetupRoutes(app *fiber.App) {
 	}
 	fmt.Println(DB, "is connected successfully")
 
-	questionnaireRepo := repositories.NewQuestionnaireRepository(DB)
-	questionnaireHandler := handlers.NewQuestionnaireHandler(questionnaireRepo)
-
 	api := app.Group("/api/v1")
-	questionnaireRoutes := api.Group("/questionnaires")
+	questionnaireHandler := questionnareRouter(DB)
+	userRepository := userRouter(DB)
 
+	questionnaireRoutes := api.Group("/questionnaires")
 	questionnaireRoutes.Post("/questionnaire", questionnaireHandler.CreateQuestionnaire)
 	questionnaireRoutes.Post("/question", questionnaireHandler.CreateQuestion)
 	questionnaireRoutes.Post("/answer", questionnaireHandler.CreateAnswer)
+
+	userRouter := api.Group("/user")
+	userRouter.Get("/questionnaires", userRepository.Quesionnare)
+
 }
