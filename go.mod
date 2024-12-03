@@ -3,6 +3,7 @@ module online-questionnaire
 go 1.23.3
 
 require (
+	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/spf13/viper v1.19.0
 	gorm.io/driver/postgres v1.5.10
 	gorm.io/gorm v1.25.12
@@ -11,7 +12,6 @@ require (
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
-	github.com/gofiber/fiber/v2 v2.52.5 // indirect
 	github.com/google/uuid v1.5.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
