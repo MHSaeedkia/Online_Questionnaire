@@ -109,6 +109,7 @@ type QuestionnairePermission struct {
 	User            User          `gorm:"foreignKey:UserID"`
 	PermissionID    uint          `json:"permission_id"`
 	Permission      Permission    `gorm:"foreignKey:PermissionID"`
+	ValidUntil      *time.Time    `json:"valid_until"`
 }
 
 type Question struct {
@@ -136,7 +137,7 @@ const (
 type Option struct {
 	ID         uint   `gorm:"primaryKey" json:"id"`
 	QuestionID uint   `json:"question_id"`
-	Text       string `gorm:"not null;unique" json:"text"`
+	Text       string `gorm:"not null" json:"text"`
 	IsCorrect  bool   `json:"is_correct"`
 }
 

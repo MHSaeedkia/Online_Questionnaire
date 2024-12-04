@@ -9,14 +9,15 @@ import (
 )
 
 func NewConnection(cfg *config.DatabaseConfig) (*gorm.DB, error) {
-	dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=%v",
-		cfg.Host,
-		cfg.User,
-		cfg.Password,
-		cfg.DBName,
-		cfg.Port,
-		cfg.SSLMode,
-	)
+	//dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=%v",
+	//	cfg.Host,
+	//	cfg.User,
+	//	cfg.Password,
+	//	cfg.DBName,
+	//	cfg.Port,
+	//	cfg.SSLMode,
+	//)
+	dsn := "postgres://root:root@localhost:5432/OnlineQuestionnaire"
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {

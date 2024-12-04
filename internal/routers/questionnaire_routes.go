@@ -23,11 +23,24 @@ func SetupRoutes(app *fiber.App) {
 	}
 	fmt.Println(DB, "is connected successfully")
 
-	questionnaireRepo := repositories.NewQuestionnaireRepository(DB)
-	questionnaireHandler := handlers.NewQuestionnaireHandler(questionnaireRepo)
-
 	api := app.Group("/api")
 	questionnaireRoutes := api.Group("/questionnaires")
 
+	questionnaireRepo := repositories.NewQuestionnaireRepository(DB)
+	questionRepo := repositories.NewQuestionRepository(DB)
+	optionRepo := repositories.NewOptionRepository(DB)
+	conditionalLogicRepo := repositories.NewConditionalLogicRepository(DB)
+
+	questionnaireHandler := handlers.NewQuestionnaireHandler(questionnaireRepo)
+	questionHandler := handlers.NewQuestionHandler(questionRepo)
+	optionHandler := handlers.NewOptionHandler(optionRepo, questionRepo)
+	conditionalLogicHandler := handlers.NewConditionalLogicHandler(conditionalLogicRepo, questionRepo, optionRepo)
+
 	questionnaireRoutes.Post("/", questionnaireHandler.CreateQuestionnaire)
+
+	questionnaireRoutes.Post("/:questionnaire_id/questions", questionHandler.CreateQuestion)
+
+	questionnaireRoutes.Post("/:questionnaire_id/questions/:question_id/options", optionHandler.CreateOptions)
+
+	questionnaireRoutes.Post("/:questionnaire_id/questions/:question_id/conditional-logic", conditionalLogicHandler.CreateConditionalLogic)
 }
