@@ -5,6 +5,7 @@ import (
 	"log"
 	config "online-questionnaire/configs"
 	"online-questionnaire/internal/db"
+	"online-questionnaire/pkg/logger"
 )
 
 func main() {
@@ -12,10 +13,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//database connect
+	log := logger.NewLogger(cfg, "", "")
+	// database connect
 	DB, err := db.NewConnection(&cfg.Database)
 	if err != nil {
-		log.Fatal(err)
+		message := fmt.Sprintf("Error creating database connection: %s", err.Error())
+		log.Fatal(message, "", nil, "testtraceid")
 	}
-	fmt.Println(DB, "is connected successfully")
+
+	message := fmt.Sprintf("successfully connected to database: %v", DB.Name())
+	log.Info(message, "", nil)
 }
