@@ -8,6 +8,7 @@ import (
 
 type UserRepository interface {
 	Quesionnare(ownerId uint) ([]models.Questionnaire, error)
+	EditQuestionnare(ownerId uint, questionnareId uint, questionnare *models.Questionnaire) error
 }
 
 type userRepository struct {
@@ -21,4 +22,8 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 func (r *userRepository) Quesionnare(ownerId uint) ([]models.Questionnaire, error) {
 	var questionnares []models.Questionnaire
 	return questionnares, r.db.Where("owner_id = ?", ownerId).Find(&questionnares).Error
+}
+
+func (r *userRepository) EditQuestionnare(ownerId uint, questionnareId uint, questionnare *models.Questionnaire) error {
+	return r.db.Where("owner_id = ? AND id = ?", ownerId, questionnareId).Updates(&questionnare).Error
 }
