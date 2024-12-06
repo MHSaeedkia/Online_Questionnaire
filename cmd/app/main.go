@@ -13,14 +13,20 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log := logger.NewLogger(cfg, "", "")
+	logErr := logger.NewLogger(cfg, "questionnaire")
+	if logErr != nil {
+		log.Fatal(logErr)
+	}
+
+	logger.GetLogger().Info("Application started", "questionnaire", logger.Logctx{})
+
 	// database connect
 	DB, err := db.NewConnection(&cfg.Database)
 	if err != nil {
 		message := fmt.Sprintf("Error creating database connection: %s", err.Error())
-		log.Fatal(message, "", nil, "testtraceid")
+		logger.GetLogger().Fatal(message, "", logger.Logctx{}, "testtraceid")
 	}
 
 	message := fmt.Sprintf("successfully connected to database: %v", DB.Name())
-	log.Info(message, "", nil)
+	logger.GetLogger().Info(message, "", logger.Logctx{})
 }
