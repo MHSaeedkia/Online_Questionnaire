@@ -8,11 +8,18 @@ DB:
   password: root
   dbname: OnlineQuestionnaire
   host: localhost
-  port: 1235
+  port: 5432
   sslmode: disable
 jwt:
   secret: ""
   expiration: 5 #minutes
+logging:
+  level: DEBUG
+  filename: /tmp/application.log
+  maxsize: 10 # MB
+  maxbackups: 10
+  maxage: 30
+  compress: true
 
 
 

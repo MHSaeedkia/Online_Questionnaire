@@ -13,6 +13,7 @@ type Config struct {
 	Server   ServerConfig   `mapstructure:"server"`
 	Database DatabaseConfig `mapstructure:"DB"`
 	JWT      JWTConfig      `mapstructure:"jwt"`
+	Logging  LoggingConfig  `mapstructure:"logging"`
 }
 
 func LoadConfig(path string) (Config, error) {
@@ -24,6 +25,7 @@ func LoadConfig(path string) (Config, error) {
 	viper.SetConfigType("yaml")
 
 	if err := viper.ReadInConfig(); err != nil {
+
 		return config, fmt.Errorf("error reading config file: %w", err)
 	}
 
@@ -62,4 +64,13 @@ type DatabaseConfig struct {
 type JWTConfig struct {
 	Secret     string `mapstructure:"secret"`
 	Expiration int64  `mapstructure:"expiration"`
+}
+
+type LoggingConfig struct {
+	Level      string `mapstructure:"level"`
+	Filename   string `mapstructure:"filename"`
+	MaxSize    int    `mapstructure:"maxsize"`
+	MaxBackups int    `mapstructure:"maxbackups"`
+	MaxAge     int    `mapstructure:"maxage"`
+	Compress   bool   `mapstructure:"compress"`
 }
