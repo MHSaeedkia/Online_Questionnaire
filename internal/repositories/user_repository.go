@@ -9,6 +9,7 @@ import (
 type UserRepository interface {
 	Quesionnare(ownerId uint) ([]models.Questionnaire, error)
 	EditQuestionnare(ownerId uint, questionnareId uint, questionnare *models.Questionnaire) error
+	CancleQuestionnare(questionnareId uint) error
 }
 
 type userRepository struct {
@@ -26,4 +27,8 @@ func (r *userRepository) Quesionnare(ownerId uint) ([]models.Questionnaire, erro
 
 func (r *userRepository) EditQuestionnare(ownerId uint, questionnareId uint, questionnare *models.Questionnaire) error {
 	return r.db.Where("owner_id = ? AND id = ?", ownerId, questionnareId).Updates(&questionnare).Error
+}
+
+func (r *userRepository) CancleQuestionnare(quuestionnareId uint) error {
+	return r.db.Where("id = ?", quuestionnareId).Delete(models.Questionnaire{}).Error
 }

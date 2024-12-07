@@ -35,5 +35,6 @@ func SetupRoutes(app *fiber.App) {
 	userRouter := api.Group("/user")
 	userRouter.Get("/questionnaires", userRepository.Quesionnare)
 	userRouter.Put("/questionnaires/edit", userRepository.EditQuestionnare)
+	userRouter.Delete("/questionnaires/cancle", userRepository.CancleQuestionnarec)
 
 }

@@ -53,3 +53,19 @@ func (h *UserHandler) EditQuestionnare(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": fmt.Sprintf("Quesionnare by id : %v has updated", quesionnareId)})
 }
+
+func (h *UserHandler) CancleQuestionnarec(c *fiber.Ctx) error {
+	quesionnareId, err := strconv.Atoi(c.Query("quesionnareId"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Bad query param"})
+	}
+
+	err = h.repo.CancleQuestionnare(uint(quesionnareId))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Failed to fetch questionnaires by id : %v", quesionnareId)})
+
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": fmt.Sprintf("Quesionnare by id : %v has deleted", quesionnareId)})
+
+}
