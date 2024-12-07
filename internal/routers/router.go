@@ -29,8 +29,16 @@ func SetupRoutes(app *fiber.App) {
 
 	questionnaireRoutes := api.Group("/questionnaires")
 	questionnaireRoutes.Post("/questionnaire", questionnaireHandler.CreateQuestionnaire)
-	questionnaireRoutes.Post("/question", questionnaireHandler.CreateQuestion)
-	questionnaireRoutes.Post("/answer", questionnaireHandler.CreateAnswer)
+
+	questionnaireRoutes.Post("/question/create", questionnaireHandler.CreateQuestion)
+	questionnaireRoutes.Get("/question/get", questionnaireHandler.GetQuestion)
+	questionnaireRoutes.Put("/question/update", questionnaireHandler.UpdateQuestion)
+	questionnaireRoutes.Delete("/question/delete", questionnaireHandler.DeleteQuestion)
+
+	questionnaireRoutes.Post("/answer/create", questionnaireHandler.CreateAnswer)
+	questionnaireRoutes.Get("/answer/get", questionnaireHandler.GetAnswer)
+	questionnaireRoutes.Put("/answer/update", questionnaireHandler.UpdateAnswer)
+	questionnaireRoutes.Delete("/answer/delete", questionnaireHandler.DeleteAnswer)
 
 	userRouter := api.Group("/user")
 	userRouter.Get("/questionnaires", userRepository.Quesionnare)
