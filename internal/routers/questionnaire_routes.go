@@ -7,7 +7,9 @@ import (
 	config "online-questionnaire/configs"
 	"online-questionnaire/internal/db"
 	"online-questionnaire/internal/handlers"
+	"online-questionnaire/internal/models"
 	"online-questionnaire/internal/repositories"
+	"online-questionnaire/pkg/middleware"
 )
 
 func SetupRoutes(app *fiber.App) {
@@ -30,11 +32,15 @@ func SetupRoutes(app *fiber.App) {
 	questionRepo := repositories.NewQuestionRepository(DB)
 	optionRepo := repositories.NewOptionRepository(DB)
 	conditionalLogicRepo := repositories.NewConditionalLogicRepository(DB)
+	permissionRepo := repositories.NewPermissionRepository(DB)
+	responseRepo := repositories.NewResponseRepository(DB)
 
 	questionnaireHandler := handlers.NewQuestionnaireHandler(questionnaireRepo)
 	questionHandler := handlers.NewQuestionHandler(questionRepo)
 	optionHandler := handlers.NewOptionHandler(optionRepo, questionRepo)
 	conditionalLogicHandler := handlers.NewConditionalLogicHandler(conditionalLogicRepo, questionRepo, optionRepo)
+	permissionHandler := handlers.NewPermissionHandler(questionnaireRepo, permissionRepo)
+	responseHandler := handlers.NewResponseHandler(responseRepo)
 
 	questionnaireRoutes.Post("/", questionnaireHandler.CreateQuestionnaire)
 
@@ -43,4 +49,14 @@ func SetupRoutes(app *fiber.App) {
 	questionnaireRoutes.Post("/:questionnaire_id/questions/:question_id/options", optionHandler.CreateOptions)
 
 	questionnaireRoutes.Post("/:questionnaire_id/questions/:question_id/conditional-logic", conditionalLogicHandler.CreateConditionalLogic)
+
+	//questionnaireRoutes.Post("/:questionnaireID/permissions", permissionHandler.GrantPermissionToUser)
+
+	questionnaireRoutes.Post("/:questionnaireID/permissions/request", permissionHandler.RequestPermission)
+
+	questionnaireRoutes.Put("/permissions/:requestID", permissionHandler.ApproveOrDenyPermissionRequest)
+
+	questionnaireRoutes.Post("/:questionnaire_id/responses", middleware.CheckPermission(DB, models.CanVote), responseHandler.FillQuestionnaire)
+
+	questionnaireRoutes.Put("/:questionnaire_id/responses", middleware.CheckPermission(DB, models.CanVote), responseHandler.EditResponse)
 }

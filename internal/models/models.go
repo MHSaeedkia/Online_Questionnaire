@@ -21,7 +21,7 @@ type User struct {
 	Questionnaires []*Questionnaire `gorm:"foreignKey:OwnerID" json:"questionnaires"`
 	Permissions    []Permission     `gorm:"many2many:user_permissions;" json:"permissions"`
 	Notifications  []Notification   `gorm:"foreignKey:UserID" json:"notifications"`
-	Responses      []*Response      `gorm:"foreignKey:QuestionnaireID"`
+	Responses      []*Response      `gorm:"foreignKey:UserID" json:"responses"`
 }
 
 type Role string
@@ -32,16 +32,20 @@ const (
 )
 
 type Questionnaire struct {
-	ID               uint           `gorm:"primaryKey" json:"id"`
-	Title            string         `gorm:"not null" json:"title"`
-	CreationTime     time.Time      `gorm:"autoCreateTime" json:"creation_time"`
-	StartTime        time.Time      `json:"start_time"`
-	EndTime          time.Time      `json:"end_time"`
-	OrderType        OrderType      `gorm:"not null;default:'Sequential'" json:"order_type"`
-	AllowReturn      bool           `gorm:"default:true" json:"allow_return"`
-	MaxParticipation int            `gorm:"default:0" json:"max_participation"`
-	ResponseTime     int            `gorm:"default:0" json:"response_time"`
-	AnonymityLevel   AnonymityLevel `gorm:"not null;default:'Invisible'"`
+	ID                  uint           `gorm:"primaryKey" json:"id"`
+	Title               string         `gorm:"not null" json:"title"`
+	CreationTime        time.Time      `gorm:"autoCreateTime" json:"creation_time"`
+	StartTime           time.Time      `json:"start_time"`
+	EndTime             time.Time      `json:"end_time"`
+	OrderType           OrderType      `gorm:"not null;default:'Sequential'" json:"order_type"`
+	AllowReturn         bool           `gorm:"default:true" json:"allow_return"`
+	MaxParticipation    int            `gorm:"default:0" json:"max_participation"`
+	ResponseTime        int            `gorm:"default:0" json:"response_time"`
+	AnonymityLevel      AnonymityLevel `gorm:"not null;default:'Invisible'"`
+	AgeRestriction      *int           `json:"age_restriction"`
+	LocationRestriction *string        `json:"location_restriction"`
+	GenderRestriction   *string        `json:"gender_restriction"`
+	WithdrawalDeadline  time.Time      `json:"withdrawal_deadline"`
 
 	OwnerID uint `json:"owner_id"`
 	Owner   User `gorm:"foreignKey:OwnerID" json:"owner"`
@@ -49,12 +53,7 @@ type Questionnaire struct {
 	// Relationships
 	Permissions []Permission `gorm:"many2many:questionnaire_permissions;" json:"permissions"`
 	Questions   []*Question  `gorm:"foreignKey:QuestionnaireID"`
-
-	AgeRestriction      *int    `json:"age_restriction"`
-	LocationRestriction *string `json:"location_restriction"`
-	GenderRestriction   *string `json:"gender_restriction"`
-
-	WithdrawalDeadline time.Time `json:"withdrawal_deadline"`
+	Responses   []*Response  `gorm:"foreignKey:QuestionnaireID" json:"responses"`
 }
 
 type Response struct {
@@ -109,7 +108,8 @@ type QuestionnairePermission struct {
 	User            User          `gorm:"foreignKey:UserID"`
 	PermissionID    uint          `json:"permission_id"`
 	Permission      Permission    `gorm:"foreignKey:PermissionID"`
-	ValidUntil      *time.Time    `json:"valid_until"`
+	ExpiresAt       *time.Time    `json:"valid_until"`
+	Status          string        `gorm:"default:'Pending'" json:"status"`
 }
 
 type Question struct {
