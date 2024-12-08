@@ -56,7 +56,7 @@ func SetupRoutes(app *fiber.App) {
 
 	questionnaireRoutes.Put("/permissions/:requestID", permissionHandler.ApproveOrDenyPermissionRequest)
 
-	questionnaireRoutes.Post("/:questionnaire_id/responses", middleware.CheckPermission(DB, models.CanVote), responseHandler.FillQuestionnaire)
+	questionnaireRoutes.Post("/:questionnaire_id/responses", middleware.CheckPermission(DB, models.CanViewVote), responseHandler.FillQuestionnaire)
 
-	questionnaireRoutes.Put("/:questionnaire_id/responses", middleware.CheckPermission(DB, models.CanVote), responseHandler.EditResponse)
+	questionnaireRoutes.Put("/:questionnaire_id/responses", middleware.CheckPermission(DB, models.CanEdit), responseHandler.EditResponse)
 }

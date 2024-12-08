@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"log"
 	"online-questionnaire/internal/models"
@@ -26,12 +27,15 @@ func NewPermissionHandler(qRepo repositories.QuestionnaireRepository, pRepo repo
 }
 
 func (h *PermissionHandler) RequestPermission(c *fiber.Ctx) error {
+	// Takes the id of requested questionnaire
 	questionnaireID, err := strconv.Atoi(c.Params("questionnaireID"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid questionnaire ID"})
 	}
 
+	// Checks if the person requesting is authenticated or not
 	requestingUserID, ok := c.Locals("user_id").(uint)
+	fmt.Println("requestingUserID=", requestingUserID)
 	if !ok {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "User not authenticated"})
 	}
@@ -75,6 +79,7 @@ func (h *PermissionHandler) ApproveOrDenyPermissionRequest(c *fiber.Ctx) error {
 	}
 
 	permission, err := h.permissionRepo.GetQuestionnairePermission(uint(requestID))
+	fmt.Println("requestID=", requestID)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Request not found"})
 	}
@@ -95,68 +100,3 @@ func (h *PermissionHandler) ApproveOrDenyPermissionRequest(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Request processed"})
 }
-
-//package handlers
-//
-//import (
-//	"github.com/gofiber/fiber/v2"
-//	"log"
-//	"online-questionnaire/internal/models"
-//	"online-questionnaire/internal/repositories"
-//	"strconv"
-//)
-//
-//type GrantPermissionRequest struct {
-//	UserID     uint        `json:"user_id"`
-//	Permission models.Name `json:"permission"`
-//	ExpiresAt  *string     `json:"expires_at"`
-//}
-//
-//type PermissionHandler struct {
-//	questionnaireRepo repositories.QuestionnaireRepository
-//	permissionRepo    repositories.PermissionRepository
-//}
-//
-//func NewPermissionHandler(qRepo repositories.QuestionnaireRepository, pRepo repositories.PermissionRepository) *PermissionHandler {
-//	return &PermissionHandler{
-//		questionnaireRepo: qRepo,
-//		permissionRepo:    pRepo,
-//	}
-//}
-//
-//func (h *PermissionHandler) GrantPermissionToUser(c *fiber.Ctx) error {
-//	questionnaireID, err := strconv.Atoi(c.Params("questionnaireID"))
-//	if err != nil {
-//		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid questionnaire ID"})
-//	}
-//
-//	var req GrantPermissionRequest
-//	if err := c.BodyParser(&req); err != nil {
-//		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
-//	}
-//
-//	// Validate if the requesting user is the owner of the questionnaire
-//	requestingUserID, ok := c.Locals("user_id").(uint) // Assuming user_id is set in middleware
-//	if !ok {
-//		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "User not authenticated"})
-//	}
-//
-//	questionnaire, err := h.questionnaireRepo.GetByID(uint(questionnaireID))
-//	if err != nil {
-//		log.Println("Error fetching questionnaire:", err)
-//		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Questionnaire not found"})
-//	}
-//
-//	if questionnaire.OwnerID != requestingUserID {
-//		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "You are not authorized to grant permissions for this questionnaire"})
-//	}
-//
-//	// Add the permission to the database
-//	err = h.permissionRepo.GrantPermission(uint(questionnaireID), req.UserID, req.Permission, req.ExpiresAt)
-//	if err != nil {
-//		log.Println("Error granting permission:", err)
-//		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to grant permission"})
-//	}
-//
-//	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Permission granted successfully"})
-//}

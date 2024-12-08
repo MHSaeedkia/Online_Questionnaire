@@ -41,7 +41,7 @@ func CheckPermission(db *gorm.DB, requiredPermission models.Name) fiber.Handler 
 func MockAuthMiddleware() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		// Mock user ID (normally this comes from token or session)
-		c.Locals("user_id", uint(4)) // Assuming user ID 1
+		c.Locals("user_id", uint(2)) // Assuming user ID 1
 		return c.Next()
 	}
 }

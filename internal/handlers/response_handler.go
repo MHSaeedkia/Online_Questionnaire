@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"log"
 	"online-questionnaire/internal/models"
 	"online-questionnaire/internal/repositories"
 	"strconv"
@@ -23,10 +24,14 @@ func (h *ResponseHandler) FillQuestionnaire(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid questionnaire ID"})
 	}
 
-	// Parse user ID from the request body (you may also extract this from a JWT or session)
-	userID, err := strconv.Atoi(c.FormValue("user_id"))
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid user ID"})
+	//// Parse user ID from the request body/JWT/session
+	//userID, err := strconv.Atoi(c.FormValue("user_id"))
+	//if err != nil {
+	//	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid user ID"})
+	//}
+	userID, ok := c.Locals("user_id").(uint)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "User not authenticated"})
 	}
 
 	// Parse responses from the request body
@@ -44,6 +49,7 @@ func (h *ResponseHandler) FillQuestionnaire(c *fiber.Ctx) error {
 	// Save responses
 	for _, response := range responses {
 		if err := h.responseRepo.CreateResponse(&response); err != nil {
+			log.Printf("Error saving response: %v, Response: %+v", err, response)
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to save responses"})
 		}
 	}
