@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"online-questionnaire/internal/models"
 	"online-questionnaire/internal/services"
+	"time"
 )
 
 type UserHandler struct {
@@ -28,11 +29,31 @@ func NewUserHandler(service *services.UserService) *UserHandler {
 //	@Failure		409		{object}	map[string]interface{}	"User already exists with this email or national ID"
 //	@Router			/api/user/signup [post]
 func (h *UserHandler) Signup(c *fiber.Ctx) error {
+	// Retrieve the updated body (if it exists)
+	requestBody := c.Locals("updatedBody").(map[string]interface{})
+
+	// Create a new user struct
 	var user models.User
-	if err := c.BodyParser(&user); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+
+	// Manually map the updated body to the user struct
+	user.NationalID = requestBody["national_id"].(string)
+	user.Email = requestBody["email"].(string)
+	user.Password = requestBody["password"].(string)
+	user.FirstName = requestBody["first_name"].(string)
+	user.LastName = requestBody["last_name"].(string)
+	user.Gender = requestBody["gender"].(string)
+	user.City = requestBody["city"].(string)
+
+	// Manually parse the date_of_birth field into time
+	if dateOfBirth, exists := requestBody["date_of_birth"].(string); exists {
+		parsedDate, err := time.Parse(time.RFC3339, dateOfBirth)
+		if err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, "Invalid date of birth format")
+		}
+		user.DateOfBirth = parsedDate
 	}
 
+	// Now proceed with the registration logic
 	token, registerErr := h.UserService.SignUp(&user)
 	if registerErr != nil {
 		return fiber.NewError(fiber.StatusConflict, registerErr.Error())
