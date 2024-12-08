@@ -17,7 +17,7 @@ func SetupRoutes(app *fiber.App, userService *services.UserService) {
 
 	api := app.Group("/api")
 	api.Post("/user/signup", userHandler.Signup)
-	//api.Post("/user/login", userHandler.Login)
+	api.Post("/user/login", userHandler.Login)
 }
 
 // @title			online Questionnaire

@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"errors"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"online-questionnaire/internal/models"
 )
@@ -15,19 +16,26 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-// CheckUserExists checks if a user exists by email or national ID.
-func (r *UserRepository) CheckUserExists(email, nationalID string) (bool, error) {
+// CheckUserExists checks if a user exists by email or national ID and returns the user if found.
+func (r *UserRepository) CheckUserExists(email, nationalID string) (*models.User, error) {
 	var user models.User
 	if err := r.db.Where("email = ? OR national_id = ?", email, nationalID).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return false, nil
+			return nil, nil // Return nil if user is not found
 		}
-		return false, err
+		return nil, err // Return error if any other issue occurs
 	}
-	return true, nil
+	return &user, nil // Return the user object if found
 }
 
 // CreateUser creates a new user in the database.
 func (r *UserRepository) CreateUser(user *models.User) error {
 	return r.db.Create(user).Error
+}
+
+// VerifyPassword compares the stored hash with the provided password.
+func (r *UserRepository) VerifyPassword(storedPassword, inputPassword string) bool {
+	// Assuming the stored password is a hash (bcrypt)
+	err := bcrypt.CompareHashAndPassword([]byte(storedPassword), []byte(inputPassword))
+	return err == nil
 }

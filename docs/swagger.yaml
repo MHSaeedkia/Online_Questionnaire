@@ -254,6 +254,42 @@ info:
   title: online Questionnaire
   version: "1.0"
 paths:
+  /api/user/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user by providing email or national ID and password
+        to receive a JWT token.
+      parameters:
+      - description: Login Request
+        in: body
+        name: login
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User logged in successfully with a JWT token
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request payload
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Incorrect credentials
+          schema:
+            additionalProperties: true
+            type: object
+      summary: User Login
+      tags:
+      - User
   /api/user/signup:
     post:
       consumes:
