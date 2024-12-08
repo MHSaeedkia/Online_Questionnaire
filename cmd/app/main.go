@@ -7,39 +7,19 @@ import (
 	"log"
 	config "online-questionnaire/configs"
 	"online-questionnaire/internal/db"
-	"online-questionnaire/internal/handlers"
 	"online-questionnaire/internal/repositories"
+	"online-questionnaire/internal/routes"
 	"online-questionnaire/internal/services"
-	"online-questionnaire/internal/utils"
 )
 
-func SetupRoutes(app *fiber.App, userService *services.UserService) {
-	userHandler := handlers.NewUserHandler(userService)
-
-	api := app.Group("/api")
-	api.Post("/user/signup", userHandler.Signup)
-	api.Post("/user/login", userHandler.Login)
-}
-
-// @title			online Questionnaire
-// @version		1.0
-// @description Questionnaire Management System API
 func main() {
-
-	password := "secret"
-	hash, _ := utils.GeneratePassword(password) // ignore error for the sake of simplicity
-
-	fmt.Println("Password:", password)
-	fmt.Println("Hash:    ", hash)
-
-	match := utils.ComparePassword(password, hash)
-	fmt.Println("Match:   ", match)
+	// Load configuration
 	cfg, err := config.LoadConfig("./configs/")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	//database connect
+	// Connect to the database
 	DB, err := db.NewConnection(&cfg.Database)
 	if err != nil {
 		log.Fatal(err)
@@ -47,25 +27,27 @@ func main() {
 	fmt.Println(DB, "is connected successfully")
 
 	// Initialize the UserRepository
-	userRepository := repositories.NewUserRepository(DB) // Assuming you have a constructor for the UserRepository
+	userRepository := repositories.NewUserRepository(DB)
+
+	// Initialize the UserService
+	userService := services.NewUserService(userRepository, cfg)
 
 	// Initialize Fiber app
 	app := fiber.New()
 
-	// Initialize services and routes
-	userService := services.NewUserService(userRepository, cfg)
-	SetupRoutes(app, userService)
+	// Setup routes using the external routes file
+	routes.SetupRoutes(app, userService)
 
-	// Serve the Swagger JSON file at /swagger/doc.json
+	// Serve Swagger UI and documentation
 	app.Get("/swagger/doc.json", func(c *fiber.Ctx) error {
 		return c.SendFile("./docs/swagger.json") // Adjust the path if necessary
 	})
 
-	// Serve the Swagger UI at /swagger
+	// Swagger UI for documentation
 	app.Get("/swagger/*", swagger.HandlerDefault)
 
-	// App port
-	if err := app.Listen(":8080"); err != nil {
+	// Start the app
+	if err := app.Listen(":3000"); err != nil {
 		log.Fatal(err)
 	}
 }
