@@ -38,7 +38,7 @@ func (s *UserService) SignUp(user *models.User) (utils.TokenData, error) {
 	// Hash the user's password
 	hashedPassword, err := utils.GeneratePassword(user.Password)
 	if err != nil {
-		return utils.TokenData{}, err // Ensure this error is handled
+		return utils.TokenData{}, err
 	}
 	user.Password = hashedPassword
 	// Process the date of birth
@@ -72,13 +72,11 @@ func (s *UserService) SignUp(user *models.User) (utils.TokenData, error) {
 func (s *UserService) Login(nationalID, password string) (utils.TokenData, error) {
 	// Fetch the user by national ID
 	user, err := s.repository.CheckUserExists(nationalID)
-	if err != nil || user == nil {
-		log.Println("Error checking user existence:", err)
+	if err != nil {
 		return utils.TokenData{}, errors.New("user not found")
 	}
 
-	log.Println("Password from DB:", user.Password, "Password input:", password, utils.ComparePassword(user.Password, password))
-	// Use ComparePassword utility to validate the password
+	// Compare the password
 	if !utils.ComparePassword(user.Password, password) {
 		return utils.TokenData{}, errors.New("incorrect password")
 	}
@@ -86,12 +84,8 @@ func (s *UserService) Login(nationalID, password string) (utils.TokenData, error
 	// Generate the JWT token
 	token, err := utils.GenerateJWTToken(user.NationalID, string(user.Role), s.jwt)
 	if err != nil {
-		log.Println("Error generating JWT token:", err)
 		return utils.TokenData{}, err
 	}
-
-	// Log successful login
-	log.Println("User logged in successfully:", user.NationalID)
 
 	return token, nil
 }
