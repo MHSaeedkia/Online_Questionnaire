@@ -21,7 +21,7 @@ func NewUserService(repository *repositories.UserRepository, cfg config.Config) 
 
 func (s *UserService) SignUp(user *models.User) (utils.TokenData, error) {
 	// Check if the user already exists
-	exist, existenceErr := s.repository.CheckUserExists(user.Email, user.NationalID)
+	exist, existenceErr := s.repository.CheckUserExists(user.NationalID)
 	if existenceErr != nil {
 		return utils.TokenData{}, existenceErr
 	}
@@ -36,8 +36,11 @@ func (s *UserService) SignUp(user *models.User) (utils.TokenData, error) {
 	}
 
 	// Hash the user's password
-	user.Password = utils.GeneratePassword(user.Password)
-
+	hashedPassword, err := utils.GeneratePassword(user.Password)
+	if err != nil {
+		return utils.TokenData{}, err // Ensure this error is handled
+	}
+	user.Password = hashedPassword
 	// Process the date of birth
 	loc, _ := time.LoadLocation("Asia/Tehran") // Set to your desired location
 
@@ -66,16 +69,16 @@ func (s *UserService) SignUp(user *models.User) (utils.TokenData, error) {
 	return token, nil
 }
 
-// Login allows a user to log in using email or national ID and password
-func (s *UserService) Login(emailOrNationalID, password string) (utils.TokenData, error) {
-	// Fetch the user by email or national ID
-	user, err := s.repository.CheckUserExists(emailOrNationalID, emailOrNationalID)
-	if err != nil {
+func (s *UserService) Login(nationalID, password string) (utils.TokenData, error) {
+	// Fetch the user by national ID
+	user, err := s.repository.CheckUserExists(nationalID)
+	if err != nil || user == nil {
 		log.Println("Error checking user existence:", err)
-		return utils.TokenData{}, err
+		return utils.TokenData{}, errors.New("user not found")
 	}
 
-	// Use the ComparePassword utility to validate the password
+	log.Println("Password from DB:", user.Password, "Password input:", password, utils.ComparePassword(user.Password, password))
+	// Use ComparePassword utility to validate the password
 	if !utils.ComparePassword(user.Password, password) {
 		return utils.TokenData{}, errors.New("incorrect password")
 	}
@@ -88,7 +91,7 @@ func (s *UserService) Login(emailOrNationalID, password string) (utils.TokenData
 	}
 
 	// Log successful login
-	log.Println("User logged in successfully:", user.Email)
+	log.Println("User logged in successfully:", user.NationalID)
 
 	return token, nil
 }

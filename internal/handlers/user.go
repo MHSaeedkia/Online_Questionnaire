@@ -45,29 +45,30 @@ func (h *UserHandler) Signup(c *fiber.Ctx) error {
 }
 
 // Login godoc
-// @Summary User Login
-// @Description Authenticate a user by providing email or national ID and password to receive a JWT token.
-// @Tags User
-// @Accept json
-// @Produce json
-// @Param login body models.LoginRequest true "Login Request"
-// @Success 200 {object} models.User "Successfully logged in"
-// @Failure 400 {object} models.ErrorResponse "Invalid request payload"
-// @Failure 401 {object} models.ErrorResponse "Incorrect credentials"
-// @Router /api/user/login [post]
+//
+//	@Summary		User Login
+//	@Description	User Login using national ID and password to obtain a JWT token.
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Param			loginRequest	body		map[string]string	true	"Login credentials (national ID and password)"
+//	@Success		200			{object}	map[string]interface{}	"User logged in successfully with a JWT token"
+//	@Failure		400			{object}	map[string]interface{}	"Invalid request payload"
+//	@Failure		401			{object}	map[string]interface{}	"Invalid credentials"
+//	@Router			/api/user/login [post]
 func (h *UserHandler) Login(c *fiber.Ctx) error {
 	var loginRequest map[string]string
 	if err := c.BodyParser(&loginRequest); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	emailOrNationalID, password := loginRequest["email_or_national_id"], loginRequest["password"]
-	if emailOrNationalID == "" || password == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "Email or National ID and password are required")
+	nationalID, password := loginRequest["national_id"], loginRequest["password"]
+	if nationalID == "" || password == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "National ID and password are required")
 	}
 
 	// Call the service layer to perform login
-	token, loginErr := h.UserService.Login(emailOrNationalID, password)
+	token, loginErr := h.UserService.Login(nationalID, password)
 	if loginErr != nil {
 		return fiber.NewError(fiber.StatusUnauthorized, loginErr.Error())
 	}
