@@ -46,31 +46,31 @@ func SetupRoutes(app *fiber.App) {
 	api := app.Group("/api/v1")
 
 	questionnaireRoutes := api.Group("/questionnaires")
-	questionnaireRoutes.Post("/create", questionnaireHandler.CreateQuestionnaire)
+	questionnaireRoutes.Post("/", questionnaireHandler.CreateQuestionnaire)
 
 	questionRoutes := api.Group("/questions")
-	questionRoutes.Post("/create", questionHandler.CreateQuestion)
-	questionRoutes.Get("/get", questionHandler.GetQuestion)
-	questionRoutes.Put("/update", questionHandler.UpdateQuestion)
-	questionRoutes.Delete("/delete", questionHandler.DeleteQuestion)
+	questionRoutes.Post("/", questionHandler.CreateQuestion)
+	questionRoutes.Get("/", questionHandler.GetQuestion)
+	questionRoutes.Put("/", questionHandler.UpdateQuestion)
+	questionRoutes.Delete("/", questionHandler.DeleteQuestion)
 
 	optionRoutes := api.Group("/options")
-	optionRoutes.Post("/create/question", optionHandler.CreateOptions)
+	optionRoutes.Post("/question", optionHandler.CreateOptions)
 
 	conditionalLogicRoutes := api.Group("/conditional-logic")
-	conditionalLogicRoutes.Post("/create/question", conditionalLogicHandler.CreateConditionalLogic)
+	conditionalLogicRoutes.Post("/question", conditionalLogicHandler.CreateConditionalLogic)
 
 	permitionRoutes := api.Group("/permition")
-	permitionRoutes.Post("/create", permissionHandler.RequestPermission)
+	permitionRoutes.Post("/", permissionHandler.RequestPermission)
 	permitionRoutes.Put("/status", permissionHandler.ApproveOrDenyPermissionRequest)
 
 	answerRoutes := api.Group("/response")
 	answerRoutes.Post("/fill", middleware.CheckPermission(DB, models.CanViewVote), responseHandler.FillQuestionnaire)
 	answerRoutes.Put("/edit", middleware.CheckPermission(DB, models.CanEdit), responseHandler.EditResponse)
-	answerRoutes.Post("/create", responseHandler.CreateResponse)
-	answerRoutes.Get("/get", responseHandler.GetResponse)
-	answerRoutes.Put("/update", responseHandler.UpdateResponse)
-	answerRoutes.Delete("/delete", responseHandler.DeleteResponse)
+	answerRoutes.Post("/", responseHandler.CreateResponse)
+	answerRoutes.Get("/", responseHandler.GetResponse)
+	answerRoutes.Put("/", responseHandler.UpdateResponse)
+	answerRoutes.Delete("/", responseHandler.DeleteResponse)
 
 	userRouter := api.Group("/user")
 	userRouter.Get("/questionnaires", userHandler.Quesionnare)
