@@ -10,6 +10,7 @@ import (
 	"online-questionnaire/internal/handlers"
 	"online-questionnaire/internal/repositories"
 	"online-questionnaire/internal/services"
+	"online-questionnaire/internal/utils"
 )
 
 func SetupRoutes(app *fiber.App, userService *services.UserService) {
@@ -24,6 +25,15 @@ func SetupRoutes(app *fiber.App, userService *services.UserService) {
 // @version		1.0
 // @description Questionnaire Management System API
 func main() {
+
+	password := "secret"
+	hash, _ := utils.GeneratePassword(password) // ignore error for the sake of simplicity
+
+	fmt.Println("Password:", password)
+	fmt.Println("Hash:    ", hash)
+
+	match := utils.ComparePassword(password, hash)
+	fmt.Println("Match:   ", match)
 	cfg, err := config.LoadConfig("./configs/")
 	if err != nil {
 		log.Fatal(err)
