@@ -29,12 +29,11 @@ func LoadConfig(path string) (Config, error) {
 		return config, fmt.Errorf("error reading config file: %w", err)
 	}
 
-	viper.AutomaticEnv()
-
-	viper.SetConfigFile(".env-example")
+	// Load .env file and merge
+	viper.SetConfigFile(".env")
 	viper.SetConfigType("env")
 	if err := viper.MergeInConfig(); err != nil {
-		fmt.Printf("Warning: .env-example file not found: %v\n", err)
+		fmt.Printf("Warning: .env file not found: %v\n", err)
 	}
 
 	viper.AutomaticEnv()
