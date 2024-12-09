@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
 	"log"
@@ -26,6 +28,20 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println(DB, "is connected successfully")
+
+	// Connect to Redis
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379", // Redis address
+		Password: "",               // No password by default
+		DB:       0,                // Default DB
+	})
+
+	// Test Redis connection
+	ctx := context.Background()
+	if err := redisClient.Ping(ctx).Err(); err != nil {
+		log.Fatalf("Failed to connect to Redis: %v", err)
+	}
+	fmt.Println("Redis is connected successfully")
 
 	// Initialize the UserRepository
 	userRepository := repositories.NewUserRepository(DB)
