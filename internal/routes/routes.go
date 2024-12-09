@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"online-questionnaire/internal/handlers"
 	"online-questionnaire/internal/middlewares"
@@ -8,11 +9,11 @@ import (
 )
 
 // SetupRoutes registers all routes
-func SetupRoutes(app *fiber.App, userService *services.UserService, oauthHandler *handlers.OAuthHandler, verificationHandler *handlers.VerificationHandler) {
+func SetupRoutes(app *fiber.App, userService *services.UserService, oauthHandler *handlers.OAuthHandler, verificationHandler *handlers.VerificationHandler, redisClient *redis.Client) {
 	userHandler := handlers.NewUserHandler(userService)
 
 	api := app.Group("/api")
-
+	api.Use(middlewares.RateLimiter(redisClient, 1)) // 1 request per second
 	// User routes
 	api.Post("/user/signup", middlewares.FixDateOfBirth, userHandler.Signup)
 	api.Post("/user/login", userHandler.Login)

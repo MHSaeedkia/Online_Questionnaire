@@ -60,7 +60,7 @@ func main() {
 	app := fiber.New()
 
 	// Setup routes using the external routes file
-	routes.SetupRoutes(app, userService, oauthHandler, verificationHandler)
+	routes.SetupRoutes(app, userService, oauthHandler, verificationHandler, redisClient.Client)
 
 	// Serve Swagger UI and documentation
 	app.Get("/swagger/doc.json", func(c *fiber.Ctx) error {
