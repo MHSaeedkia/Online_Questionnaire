@@ -29,10 +29,10 @@ type GoogleUser struct {
 }
 
 // NewOAuthService initializes a new OAuthService instance
-func NewOAuthService(clientID, clientSecret string, repository *repositories.UserRepository) *OAuthService {
+func NewOAuthService(config config.Config, repository *repositories.UserRepository) *OAuthService {
 	return &OAuthService{
-		ClientID:     clientID,
-		ClientSecret: clientSecret,
+		ClientID:     config.ClientID,
+		ClientSecret: config.ClientSecret,
 		repository:   repository,
 	}
 }

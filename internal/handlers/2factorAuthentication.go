@@ -1,5 +1,6 @@
 package handlers
 
+/*
 import (
 	"context"
 	"fmt"
@@ -61,3 +62,4 @@ func sendEmail(to, code string) error {
 	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, message)
 	return err
 }
+*/
