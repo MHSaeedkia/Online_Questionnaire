@@ -18,5 +18,5 @@ func SetupRoutes(app *fiber.App, userService *services.UserService, oauthHandler
 	api.Post("/user/login", userHandler.Login)
 
 	// Google OAuth login
-	api.Post("/user/oath", oauthHandler.GoogleLogin)
+	api.Post("/user/oauth", oauthHandler.GoogleLogin)
 }
