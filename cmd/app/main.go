@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
 	"log"
@@ -13,12 +15,33 @@ import (
 	"online-questionnaire/internal/services"
 )
 
+var redisClient *redis.Client
+var ctx = context.Background()
+
+// Redis Initialization (inside the main app)
+func initRedis() {
+	// Initialize Redis client
+	redisClient = redis.NewClient(&redis.Options{
+		Addr: "localhost:6379", // Assuming Redis is running locally
+	})
+
+	// Check Redis connection
+	_, err := redisClient.Ping(ctx).Result()
+	if err != nil {
+		log.Fatalf("Could not connect to Redis: %v", err)
+	} else {
+		log.Println("Connected to Redis successfully")
+	}
+}
+
 func main() {
 	// Load configuration
 	cfg, err := config.LoadConfig("./configs/")
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	initRedis()
 
 	// Connect to the database
 	DB, err := db.NewConnection(&cfg.Database)
