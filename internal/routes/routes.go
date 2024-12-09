@@ -8,7 +8,7 @@ import (
 )
 
 // SetupRoutes registers all routes
-func SetupRoutes(app *fiber.App, userService *services.UserService, oauthHandler *handlers.OAuthHandler) {
+func SetupRoutes(app *fiber.App, userService *services.UserService, oauthHandler *handlers.OAuthHandler, verificationHandler *handlers.VerificationHandler) {
 	userHandler := handlers.NewUserHandler(userService)
 
 	api := app.Group("/api")
@@ -19,4 +19,8 @@ func SetupRoutes(app *fiber.App, userService *services.UserService, oauthHandler
 
 	// Google OAuth login
 	api.Post("/user/oauth", oauthHandler.GoogleLogin)
+
+	// Verification routes
+	api.Post("/verification/send", verificationHandler.SendVerificationCode)
+	api.Post("/verification/validate", verificationHandler.ValidateVerificationCode)
 }

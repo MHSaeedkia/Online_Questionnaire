@@ -1,9 +1,7 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
 	"log"
@@ -13,6 +11,7 @@ import (
 	"online-questionnaire/internal/repositories"
 	"online-questionnaire/internal/routes"
 	"online-questionnaire/internal/services"
+	"online-questionnaire/internal/utils"
 )
 
 func main() {
@@ -30,18 +29,20 @@ func main() {
 	fmt.Println(DB, "is connected successfully")
 
 	// Connect to Redis
-	redisClient := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379", // Redis address
-		Password: "",               // No password by default
-		DB:       0,                // Default DB
-	})
+	redisClient := utils.NewRedisClient()
 
-	// Test Redis connection
-	ctx := context.Background()
-	if err := redisClient.Ping(ctx).Err(); err != nil {
-		log.Fatalf("Failed to connect to Redis: %v", err)
+	emailSender := &utils.SendEmail{
+		SMTPHost:     "smtp.gmail.com",
+		SMTPPort:     587,
+		SMTPUsername: "golang.project2@gmail.com",
+		SMTPPassword: "xdgrmaefztthqowj",
 	}
-	fmt.Println("Redis is connected successfully")
+
+	// Initialize the VerificationService
+	verificationService := services.NewVerificationService(redisClient, emailSender)
+
+	// Initialize the VerificationHandler
+	verificationHandler := handlers.NewVerificationHandler(verificationService)
 
 	// Initialize the UserRepository
 	userRepository := repositories.NewUserRepository(DB)
@@ -59,7 +60,7 @@ func main() {
 	app := fiber.New()
 
 	// Setup routes using the external routes file
-	routes.SetupRoutes(app, userService, oauthHandler)
+	routes.SetupRoutes(app, userService, oauthHandler, verificationHandler)
 
 	// Serve Swagger UI and documentation
 	app.Get("/swagger/doc.json", func(c *fiber.Ctx) error {
