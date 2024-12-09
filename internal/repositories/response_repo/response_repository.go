@@ -1,4 +1,4 @@
-package repositories
+package response_repo
 
 import (
 	"gorm.io/gorm"

@@ -1,18 +1,18 @@
-package handlers
+package response_handler
 
 import (
 	"github.com/gofiber/fiber/v2"
 	"log"
 	"online-questionnaire/internal/models"
-	"online-questionnaire/internal/repositories"
+	"online-questionnaire/internal/repositories/response_repo"
 	"strconv"
 )
 
 type ResponseHandler struct {
-	responseRepo repositories.ResponseRepository
+	responseRepo response_repo.ResponseRepository
 }
 
-func NewResponseHandler(responseRepo repositories.ResponseRepository) *ResponseHandler {
+func NewResponseHandler(responseRepo response_repo.ResponseRepository) *ResponseHandler {
 	return &ResponseHandler{responseRepo: responseRepo}
 }
 

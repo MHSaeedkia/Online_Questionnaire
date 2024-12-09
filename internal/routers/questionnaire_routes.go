@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"log"
+	handlers2 "online-questionnaire/api/handlers/permission_handler"
+	"online-questionnaire/api/handlers/questionnaire_handlers"
+	"online-questionnaire/api/handlers/response_handler"
 	config "online-questionnaire/configs"
 	"online-questionnaire/internal/db"
-	"online-questionnaire/internal/handlers"
 	"online-questionnaire/internal/models"
-	"online-questionnaire/internal/repositories"
+	"online-questionnaire/internal/repositories/permission_repo"
+	"online-questionnaire/internal/repositories/questionnaire_repo"
+	"online-questionnaire/internal/repositories/response_repo"
 	"online-questionnaire/pkg/middleware"
 )
 
@@ -28,19 +32,19 @@ func SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
 	questionnaireRoutes := api.Group("/questionnaires")
 
-	questionnaireRepo := repositories.NewQuestionnaireRepository(DB)
-	questionRepo := repositories.NewQuestionRepository(DB)
-	optionRepo := repositories.NewOptionRepository(DB)
-	conditionalLogicRepo := repositories.NewConditionalLogicRepository(DB)
-	permissionRepo := repositories.NewPermissionRepository(DB)
-	responseRepo := repositories.NewResponseRepository(DB)
+	questionnaireRepo := questionnaire_repo.NewQuestionnaireRepository(DB)
+	questionRepo := questionnaire_repo.NewQuestionRepository(DB)
+	optionRepo := questionnaire_repo.NewOptionRepository(DB)
+	conditionalLogicRepo := questionnaire_repo.NewConditionalLogicRepository(DB)
+	permissionRepo := permission_repo.NewPermissionRepository(DB)
+	responseRepo := response_repo.NewResponseRepository(DB)
 
-	questionnaireHandler := handlers.NewQuestionnaireHandler(questionnaireRepo)
-	questionHandler := handlers.NewQuestionHandler(questionRepo)
-	optionHandler := handlers.NewOptionHandler(optionRepo, questionRepo)
-	conditionalLogicHandler := handlers.NewConditionalLogicHandler(conditionalLogicRepo, questionRepo, optionRepo)
-	permissionHandler := handlers.NewPermissionHandler(questionnaireRepo, permissionRepo)
-	responseHandler := handlers.NewResponseHandler(responseRepo)
+	questionnaireHandler := questionnaire_handlers.NewQuestionnaireHandler(questionnaireRepo)
+	questionHandler := questionnaire_handlers.NewQuestionHandler(questionRepo)
+	optionHandler := questionnaire_handlers.NewOptionHandler(optionRepo, questionRepo)
+	conditionalLogicHandler := questionnaire_handlers.NewConditionalLogicHandler(conditionalLogicRepo, questionRepo, optionRepo)
+	permissionHandler := handlers2.NewPermissionHandler(questionnaireRepo, permissionRepo)
+	responseHandler := response_handler.NewResponseHandler(responseRepo)
 
 	questionnaireRoutes.Post("/", questionnaireHandler.CreateQuestionnaire)
 

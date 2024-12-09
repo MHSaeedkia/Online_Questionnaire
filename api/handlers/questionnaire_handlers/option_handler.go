@@ -1,19 +1,19 @@
-package handlers
+package questionnaire_handlers
 
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"online-questionnaire/internal/models"
-	"online-questionnaire/internal/repositories"
+	"online-questionnaire/internal/repositories/questionnaire_repo"
 	"strconv"
 )
 
 type OptionHandler struct {
-	optionRepo   repositories.OptionRepository
-	questionRepo repositories.QuestionRepository
+	optionRepo   questionnaire_repo.OptionRepository
+	questionRepo questionnaire_repo.QuestionRepository
 }
 
-func NewOptionHandler(optionRepo repositories.OptionRepository, questionRepo repositories.QuestionRepository) *OptionHandler {
+func NewOptionHandler(optionRepo questionnaire_repo.OptionRepository, questionRepo questionnaire_repo.QuestionRepository) *OptionHandler {
 	return &OptionHandler{optionRepo, questionRepo}
 }
 

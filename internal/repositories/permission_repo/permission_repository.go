@@ -1,4 +1,4 @@
-package repositories
+package permission_repo
 
 import (
 	"online-questionnaire/internal/models"

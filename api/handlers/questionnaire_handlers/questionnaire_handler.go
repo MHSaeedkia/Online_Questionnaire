@@ -1,18 +1,18 @@
-package handlers
+package questionnaire_handlers
 
 import (
 	"online-questionnaire/internal/models"
-	"online-questionnaire/internal/repositories"
+	"online-questionnaire/internal/repositories/questionnaire_repo"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type QuestionnaireHandler struct {
-	repo repositories.QuestionnaireRepository
+	repo questionnaire_repo.QuestionnaireRepository
 }
 
-func NewQuestionnaireHandler(repo repositories.QuestionnaireRepository) *QuestionnaireHandler {
+func NewQuestionnaireHandler(repo questionnaire_repo.QuestionnaireRepository) *QuestionnaireHandler {
 	return &QuestionnaireHandler{repo}
 }
 

@@ -1,11 +1,12 @@
-package handlers
+package permission_handler
 
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"log"
 	"online-questionnaire/internal/models"
-	"online-questionnaire/internal/repositories"
+	"online-questionnaire/internal/repositories/permission_repo"
+	"online-questionnaire/internal/repositories/questionnaire_repo"
 	"strconv"
 )
 
@@ -15,11 +16,11 @@ type GrantPermissionRequest struct {
 }
 
 type PermissionHandler struct {
-	questionnaireRepo repositories.QuestionnaireRepository
-	permissionRepo    repositories.PermissionRepository
+	questionnaireRepo questionnaire_repo.QuestionnaireRepository
+	permissionRepo    permission_repo.PermissionRepository
 }
 
-func NewPermissionHandler(qRepo repositories.QuestionnaireRepository, pRepo repositories.PermissionRepository) *PermissionHandler {
+func NewPermissionHandler(qRepo questionnaire_repo.QuestionnaireRepository, pRepo permission_repo.PermissionRepository) *PermissionHandler {
 	return &PermissionHandler{
 		questionnaireRepo: qRepo,
 		permissionRepo:    pRepo,

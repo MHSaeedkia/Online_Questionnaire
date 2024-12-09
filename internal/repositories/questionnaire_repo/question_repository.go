@@ -1,4 +1,4 @@
-package repositories
+package questionnaire_repo
 
 import (
 	"gorm.io/gorm"
