@@ -34,9 +34,17 @@ func (h *OAuthHandler) GoogleLogin(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusUnauthorized, "Invalid Google token")
 	}
 
-	// Generate JWT token for the user
-	token, err := h.Service.GenerateJWTToken(userInfo.Email, "oauth-client")
+	// Check if user exists or if you should create a new one
+	existingUser, err := h.Service.GetOrCreateUser(userInfo)
 	if err != nil {
+		log.Printf("Error creating/finding user: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError, "Error with user authentication")
+	}
+
+	// Generate JWT token for the user
+	token, err := h.Service.GenerateJWTToken(existingUser.Email, "User")
+	if err != nil {
+		log.Printf("Error generating JWT token: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError, "Error generating JWT token")
 	}
 
