@@ -8,12 +8,15 @@ import (
 )
 
 // SetupRoutes registers all routes
-func SetupRoutes(app *fiber.App, userService *services.UserService) {
+func SetupRoutes(app *fiber.App, userService *services.UserService, oauthHandler *handlers.OAuthHandler) {
 	userHandler := handlers.NewUserHandler(userService)
 
 	api := app.Group("/api")
 
+	// User routes
 	api.Post("/user/signup", middlewares.FixDateOfBirth, userHandler.Signup)
 	api.Post("/user/login", userHandler.Login)
 
+	// Google OAuth login
+	api.Post("/user/oath", oauthHandler.GoogleLogin)
 }

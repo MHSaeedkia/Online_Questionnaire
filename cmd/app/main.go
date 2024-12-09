@@ -7,6 +7,7 @@ import (
 	"log"
 	config "online-questionnaire/configs"
 	"online-questionnaire/internal/db"
+	"online-questionnaire/internal/handlers"
 	"online-questionnaire/internal/repositories"
 	"online-questionnaire/internal/routes"
 	"online-questionnaire/internal/services"
@@ -32,11 +33,17 @@ func main() {
 	// Initialize the UserService
 	userService := services.NewUserService(userRepository, cfg)
 
+	// Initialize the OAuthService
+	oauthService := services.NewOAuthService(cfg, userRepository)
+
+	// Initialize the OAuthHandler
+	oauthHandler := handlers.NewOAuthHandler(oauthService)
+
 	// Initialize Fiber app
 	app := fiber.New()
 
 	// Setup routes using the external routes file
-	routes.SetupRoutes(app, userService)
+	routes.SetupRoutes(app, userService, oauthHandler)
 
 	// Serve Swagger UI and documentation
 	app.Get("/swagger/doc.json", func(c *fiber.Ctx) error {
@@ -47,7 +54,7 @@ func main() {
 	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	// Start the app
-	if err := app.Listen(":3000"); err != nil {
+	if err := app.Listen(fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)); err != nil {
 		log.Fatal(err)
 	}
 }
