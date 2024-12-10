@@ -1,7 +1,7 @@
 info:
   contact: {}
   description: Questionnaire Management System API
-  title: online Questionnaire
+  title: Online Questionnaire
   version: "1.0"
 
 paths:
@@ -9,37 +9,56 @@ paths:
     post:
       summary: "Create a new questionnaire"
       description: "Allows a user to create a new questionnaire."
-      parameters:
-        - in: "body"
-          name: "body"
-          required: true
-          description: "Questionnaire details"
-          schema:
-            type: "object"
-            properties:
-              title:
-                type: "string"
-              description:
-                type: "string"
-              questions:
-                type: "array"
-                items:
-                  type: "object"
-                  properties:
-                    question_text:
-                      type: "string"
-                    question_type:
-                      type: "string"
-                      enum: ["text", "multiple_choice", "checkbox"]
-                    options:
-                      type: "array"
-                      items:
-                        type: "string"
+      requestBody:
+        description: "The questionnaire object that needs to be created"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                title:
+                  type: "string"
+                  example: "Customer Satisfaction Survey"
+                start_time:
+                  type: "string"
+                  format: "date-time"
+                  example: "2024-12-15T08:00:00Z"
+                end_time:
+                  type: "string"
+                  format: "date-time"
+                  example: "2024-12-20T20:00:00Z"
+                order_type:
+                  type: "string"
+                  enum: ["Sequential", "Random"]
+                  example: "Sequential"
+                allow_return:
+                  type: "boolean"
+                  example: true
+                max_participation:
+                  type: "integer"
+                  example: 100
+                response_time:
+                  type: "integer"
+                  example: 30
+                anonymity_level:
+                  type: "string"
+                  enum: ["All", "CreatorOrAdmin", "Invisible"]
+                  example: "Invisible"
+                age_restriction:
+                  type: "integer"
+                  example: 18
+                location_restriction:
+                  type: "string"
+                  example: "Tehran"
+                gender_restriction:
+                  type: "string"
+                  example: "Male"
       responses:
         "201":
           description: "Questionnaire created successfully"
         "400":
-          description: "Invalid input"
+          description: "Invalid request body"
         "500":
           description: "Internal server error"
 
@@ -50,30 +69,125 @@ paths:
       responses:
         "200":
           description: "List of questionnaires"
-          schema:
-            type: "array"
-            items:
-              type: "object"
-              properties:
-                id:
-                  type: "integer"
-                title:
-                  type: "string"
-                description:
-                  type: "string"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    id:
+                      type: "integer"
+                    title:
+                      type: "string"
+                    start_time:
+                      type: "string"
+                      format: "date-time"
+                    end_time:
+                      type: "string"
+                      format: "date-time"
+                    order_type:
+                      type: "string"
+                    allow_return:
+                      type: "boolean"
+                    max_participation:
+                      type: "integer"
         "500":
           description: "Internal server error"
 
   /questionnaires/{id}:
+    get:
+      summary: "Get a specific questionnaire"
+      description: "Returns a questionnaire by ID."
+      parameters:
+        - in: "path"
+          name: "id"
+          required: true
+          description: "ID of the questionnaire to retrieve"
+          schema:
+            type: "integer"
+      responses:
+        "200":
+          description: "Questionnaire details"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  id:
+                    type: "integer"
+                  title:
+                    type: "string"
+                  start_time:
+                    type: "string"
+                    format: "date-time"
+                  end_time:
+                    type: "string"
+                    format: "date-time"
+                  order_type:
+                    type: "string"
+                  allow_return:
+                    type: "boolean"
+                  max_participation:
+                    type: "integer"
+        "404":
+          description: "Questionnaire not found"
+        "500":
+          description: "Internal server error"
+
+    put:
+      summary: "Update a specific questionnaire"
+      description: "Updates a questionnaire by ID."
+      parameters:
+        - in: "path"
+          name: "id"
+          required: true
+          description: "ID of the questionnaire to update"
+          schema:
+            type: "integer"
+      requestBody:
+        description: "The updated questionnaire object"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                title:
+                  type: "string"
+                  example: "Updated Survey Title"
+                start_time:
+                  type: "string"
+                  format: "date-time"
+                  example: "2024-12-16T09:00:00Z"
+                end_time:
+                  type: "string"
+                  format: "date-time"
+                  example: "2024-12-25T21:00:00Z"
+                order_type:
+                  type: "string"
+                  enum: ["Sequential", "Random"]
+                  example: "Random"
+      responses:
+        "200":
+          description: "Questionnaire updated successfully"
+        "400":
+          description: "Invalid request body"
+        "404":
+          description: "Questionnaire not found"
+        "500":
+          description: "Internal server error"
+
     delete:
-      summary: "Delete a questionnaire"
+      summary: "Delete a specific questionnaire"
       description: "Deletes a questionnaire by ID."
       parameters:
         - in: "path"
           name: "id"
           required: true
           description: "ID of the questionnaire to delete"
-          type: "integer"
+          schema:
+            type: "integer"
       responses:
         "204":
           description: "Questionnaire deleted successfully"
