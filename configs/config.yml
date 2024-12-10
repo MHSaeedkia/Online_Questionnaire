@@ -2,7 +2,7 @@ app_name: OnlineQuestionnaire
 debug: true
 server:
   host: localhost
-  port: 8000
+  port: 8080
 DB:
   user: admin
   password: admin123
@@ -13,7 +13,7 @@ DB:
 
 
 jwt:
-  secret: ""
+  secret: "secret"
   expiration: 5 #minutes
 
 #oath
