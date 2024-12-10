@@ -13,7 +13,7 @@ DB:
 
 
 jwt:
-  secret: ""
+  secret: "secret"
   expiration: 5 #minutes
 
 
