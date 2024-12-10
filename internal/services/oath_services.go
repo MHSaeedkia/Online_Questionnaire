@@ -8,7 +8,7 @@ import (
 	"net/http"
 	config "online-questionnaire/configs"
 	"online-questionnaire/internal/models"
-	"online-questionnaire/internal/repositories"
+	"online-questionnaire/internal/repositories/user_repo"
 	"online-questionnaire/internal/utils"
 )
 
@@ -16,7 +16,7 @@ import (
 type OAuthService struct {
 	ClientID     string
 	ClientSecret string
-	repository   *repositories.UserRepository
+	repository   *user_repo.UserRepository
 }
 
 // GoogleUser contains the fields returned from the Google OAuth API
@@ -29,7 +29,7 @@ type GoogleUser struct {
 }
 
 // NewOAuthService initializes a new OAuthService instance
-func NewOAuthService(config config.Config, repository *repositories.UserRepository) *OAuthService {
+func NewOAuthService(config config.Config, repository *user_repo.UserRepository) *OAuthService {
 	return &OAuthService{
 		ClientID:     config.ClientID,
 		ClientSecret: config.ClientSecret,

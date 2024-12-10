@@ -30,10 +30,12 @@ func LoadConfig(path string) (Config, error) {
 	}
 
 	// Load .env file and merge
-	viper.SetConfigFile(".env")
-	viper.SetConfigType("env")
+	viper.AutomaticEnv()
+
+	viper.SetConfigFile(".env-example")
+	viper.SetConfigType(".env")
 	if err := viper.MergeInConfig(); err != nil {
-		fmt.Printf("Warning: .env file not found: %v\n", err)
+		fmt.Printf("Warning: .env-example file not found: %v\n", err)
 	}
 
 	viper.AutomaticEnv()

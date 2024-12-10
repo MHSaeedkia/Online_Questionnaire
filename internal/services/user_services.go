@@ -4,16 +4,16 @@ import (
 	"errors"
 	config "online-questionnaire/configs"
 	"online-questionnaire/internal/models"
-	"online-questionnaire/internal/repositories"
+	"online-questionnaire/internal/repositories/user_repo"
 	"online-questionnaire/internal/utils"
 )
 
 type UserService struct {
-	repository *repositories.UserRepository
+	repository *user_repo.UserRepository
 	jwt        config.Config
 }
 
-func NewUserService(repository *repositories.UserRepository, cfg config.Config) *UserService {
+func NewUserService(repository *user_repo.UserRepository, cfg config.Config) *UserService {
 	return &UserService{repository: repository, jwt: cfg}
 }
 

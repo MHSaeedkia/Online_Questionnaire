@@ -1,4 +1,4 @@
-package handlers
+package user_handler
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -77,6 +77,7 @@ func (h *UserHandler) Signup(c *fiber.Ctx) error {
 //	@Failure		400			{object}	map[string]interface{}	"Invalid request payload"
 //	@Failure		401			{object}	map[string]interface{}	"Invalid credentials"
 //	@Router			/api/user/login [post]
+
 func (h *UserHandler) Login(c *fiber.Ctx) error {
 	var loginRequest map[string]string
 	if err := c.BodyParser(&loginRequest); err != nil {
