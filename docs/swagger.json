@@ -1,0 +1,10 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Questionnaire Management System API",
+        "title": "online Questionnaire",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {}
+}

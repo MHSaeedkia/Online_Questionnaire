@@ -1,0 +1,50 @@
+# Directory to watch for changes. It should include all Go files (e.g., cmd/app, handlers, middlewares)
+root = "cmd/app"
+
+# Temporary directory for compiled binary
+tmp_dir = "../../tmp"
+
+[build]
+# Include all Go files in the project
+include_dir = [
+    "cmd/app",           # Main app directory
+    "models",            # Include models directory
+    "utils",             # Include utils directory
+    "handlers",          # Include handlers directory
+    "middlewares"        # Include middlewares directory
+]
+include_ext = ["go", "tpl", "tmpl", "html"]
+
+# Exclude unnecessary directories or files (like vendor, testdata, etc.)
+exclude_dir = ["assets", "tmp", "vendor", "testdata"]
+exclude_file = []
+exclude_regex = ["_test.go"]  # Exclude test files if not needed
+exclude_unchanged = false
+follow_symlink = false
+
+# Build settings
+cmd = "go build -o ./tmp/main.exe ./cmd/app"
+bin = "tmp\\main.exe"
+delay = 1000  # Delay in milliseconds between rebuilds
+log = "build-errors.log"
+
+# Automatic rebuild delay settings
+rerun = true
+rerun_delay = 500  # Rebuild delay in milliseconds after a change
+
+[log]
+main_only = false
+silent = false
+time = false
+
+[misc]
+clean_on_exit = false
+
+[screen]
+clear_on_rebuild = false
+keep_scroll = true
+
+# Polling settings for Windows or slower file systems
+[poll]
+poll = true
+poll_interval = 500  # Interval for checking file changes
