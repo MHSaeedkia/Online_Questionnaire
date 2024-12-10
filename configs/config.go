@@ -8,12 +8,14 @@ import (
 )
 
 type Config struct {
-	AppName  string         `mapstructure:"app_name"`
-	Debug    bool           `mapstructure:"debug"`
-	Server   ServerConfig   `mapstructure:"server"`
-	Database DatabaseConfig `mapstructure:"DB"`
-	JWT      JWTConfig      `mapstructure:"jwt"`
-	Logging  LoggingConfig  `mapstructure:"logging"`
+	AppName      string         `mapstructure:"app_name"`
+	Debug        bool           `mapstructure:"debug"`
+	Server       ServerConfig   `mapstructure:"server"`
+	Database     DatabaseConfig `mapstructure:"DB"`
+	JWT          JWTConfig      `mapstructure:"jwt"`
+	ClientID     string         `mapstructure:"client_id"`
+	ClientSecret string         `mapstructure:"client_secret"`
+  Logging  LoggingConfig  `mapstructure:"logging"`
 }
 
 func LoadConfig(path string) (Config, error) {
@@ -28,6 +30,7 @@ func LoadConfig(path string) (Config, error) {
 		return config, fmt.Errorf("error reading config file: %w", err)
 	}
 
+	// Load .env file and merge
 	viper.AutomaticEnv()
 
 	viper.SetConfigFile(".env-example")
@@ -39,9 +42,14 @@ func LoadConfig(path string) (Config, error) {
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
+	// Unmarshal config
 	if err := viper.Unmarshal(&config); err != nil {
 		return config, fmt.Errorf("unable to decode into struct: %w", err)
 	}
+
+	// Load ClientID and ClientSecret directly from environment variables
+	config.ClientID = viper.GetString("CLIENT_ID")
+	config.ClientSecret = viper.GetString("CLIENT_SECRET")
 
 	fmt.Printf("Loaded Config: %+v\n", config)
 	return config, nil

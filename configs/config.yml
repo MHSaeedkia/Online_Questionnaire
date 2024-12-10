@@ -16,7 +16,9 @@ jwt:
   secret: "secret"
   expiration: 5 #minutes
 
-
+#oath
+client_id: ""
+client_secret: ""
 
 
 

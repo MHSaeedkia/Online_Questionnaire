@@ -16,6 +16,7 @@ import (
 	"online-questionnaire/internal/repositories/response_repo"
 	"online-questionnaire/internal/repositories/user_repo"
 	"online-questionnaire/internal/services"
+	"online-questionnaire/internal/utils"
 	"online-questionnaire/pkg/middleware"
 
 	"github.com/gofiber/fiber/v2"
@@ -29,7 +30,18 @@ func SetupRoutes(cfg configs.Config, app *fiber.App) {
 	}
 	fmt.Println(DB, "is connected successfully")
 
+	//redis connect
+	redisClient := utils.NewRedisClient()
+
+	emailSender := &utils.SendEmail{
+		SMTPHost:     "smtp.gmail.com",
+		SMTPPort:     587,
+		SMTPUsername: "golang.project2@gmail.com",
+		SMTPPassword: "xdgrmaefztthqowj",
+	}
+
 	api := app.Group("/api")
+	api.Use(middlewares.RateLimiter(redisClient.Client, 1)) // 1 request per second
 	userRoutes := api.Group("/users")
 	questionnaireRoutes := api.Group("/questionnaires")
 
@@ -38,7 +50,8 @@ func SetupRoutes(cfg configs.Config, app *fiber.App) {
 
 	userRepo := user_repo.NewUserRepository(DB)
 	userService := services.NewUserService(userRepo, cfg)
-
+	oauthService := services.NewOAuthService(cfg, userRepo)
+	verificationService := services.NewVerificationService(redisClient, emailSender)
 	questionnaireRepo := questionnaire_repo.NewQuestionnaireRepository(DB)
 	questionRepo := questionnaire_repo.NewQuestionRepository(DB)
 	optionRepo := questionnaire_repo.NewOptionRepository(DB)
@@ -47,6 +60,8 @@ func SetupRoutes(cfg configs.Config, app *fiber.App) {
 	responseRepo := response_repo.NewResponseRepository(DB)
 
 	userHandler := user_handler.NewUserHandler(userService)
+	oauthHandler := user_handler.NewOAuthHandler(oauthService)
+	verificationHandler := user_handler.NewVerificationHandler(verificationService)
 
 	questionnaireHandler := questionnaire_handlers.NewQuestionnaireHandler(questionnaireRepo)
 	questionHandler := questionnaire_handlers.NewQuestionHandler(questionRepo)
@@ -54,6 +69,13 @@ func SetupRoutes(cfg configs.Config, app *fiber.App) {
 	conditionalLogicHandler := questionnaire_handlers.NewConditionalLogicHandler(conditionalLogicRepo, questionRepo, optionRepo)
 	permissionHandler := handlers2.NewPermissionHandler(questionnaireRepo, permissionRepo)
 	responseHandler := response_handler.NewResponseHandler(responseRepo)
+
+	// Google OAuth login
+	api.Post("/user/oauth", oauthHandler.GoogleLogin)
+
+	// Verification routes
+	api.Post("/verification/send", verificationHandler.SendVerificationCode)
+	api.Post("/verification/validate", verificationHandler.ValidateVerificationCode)
 
 	userRoutes.Post("/signup", middlewares.FixDateOfBirth, userHandler.Signup)
 	userRoutes.Post("/login", userHandler.Login)
