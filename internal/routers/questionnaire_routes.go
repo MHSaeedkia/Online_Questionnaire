@@ -45,6 +45,7 @@ func SetupRoutes(app *fiber.App) {
 	}
 
 	api := app.Group("/api")
+	api.Use(middlewares.RateLimiter(redisClient.Client, 1)) // 1 request per second
 	userRoutes := api.Group("/users")
 	questionnaireRoutes := api.Group("/questionnaires")
 
