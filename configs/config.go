@@ -1,4 +1,4 @@
-package config
+package configs
 
 import (
 	"fmt"
@@ -15,6 +15,7 @@ type Config struct {
 	JWT          JWTConfig      `mapstructure:"jwt"`
 	ClientID     string         `mapstructure:"client_id"`
 	ClientSecret string         `mapstructure:"client_secret"`
+  Logging  LoggingConfig  `mapstructure:"logging"`
 }
 
 func LoadConfig(path string) (Config, error) {
@@ -71,4 +72,13 @@ type DatabaseConfig struct {
 type JWTConfig struct {
 	Secret     string `mapstructure:"secret"`
 	Expiration int64  `mapstructure:"expiration"`
+}
+
+type LoggingConfig struct {
+	Level      string `mapstructure:"level"`
+	Filename   string `mapstructure:"filename"`
+	MaxSize    int    `mapstructure:"maxsize"`
+	MaxBackups int    `mapstructure:"maxbackups"`
+	MaxAge     int    `mapstructure:"maxage"`
+	Compress   bool   `mapstructure:"compress"`
 }
