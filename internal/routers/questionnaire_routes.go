@@ -106,3 +106,4 @@ func SetupRoutes(cfg configs.Config, app *fiber.App) {
 	questionnaireRoutes.Post("/:questionnaire_id/responses", middleware.CheckPermission(DB, models.CanViewVote), responseHandler.FillQuestionnaire) // Submit a response to a questionnaire
 	questionnaireRoutes.Put("/:questionnaire_id/responses", middleware.CheckPermission(DB, models.CanEdit), responseHandler.EditResponse) // Edit an existing response
 }
+
