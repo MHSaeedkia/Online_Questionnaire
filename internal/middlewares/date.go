@@ -1,9 +1,11 @@
 package middlewares
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"log"
 	"strings"
+
+	"log"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func FixDateOfBirth(c *fiber.Ctx) error {

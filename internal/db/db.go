@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"online-questionnaire/configs"
+	"online-questionnaire/internal/logger"
 	"online-questionnaire/internal/models"
 
 	"gorm.io/driver/postgres"
@@ -10,23 +11,23 @@ import (
 )
 
 func NewConnection(cfg *configs.DatabaseConfig) (*gorm.DB, error) {
-	//dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=%v",
-	//	cfg.Host,
-	//	cfg.User,
-	//	cfg.Password,
-	//	cfg.DBName,
-	//	cfg.Port,
-	//	cfg.SSLMode,
-	//)
-	dsn := "postgres://root:root@localhost:5432/OnlineQuestionnaire"
-
+	dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=%v",
+		cfg.Host,
+		cfg.User,
+		cfg.Password,
+		cfg.DBName,
+		cfg.Port,
+		cfg.SSLMode,
+	)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
+		logger.GetLogger().Fatal("Failed to COnnect to database", err, logger.Logctx{}, "")
 		fmt.Printf("Database connection failed with DSN: %s\n", dsn)
 		return nil, err
 	}
 
 	if err := migrate(db); err != nil {
+		logger.GetLogger().Fatal("Migration Failed", err, logger.Logctx{}, "")
 		fmt.Printf("migrations failed: %v\n", err.Error())
 		return nil, err
 	}

@@ -1,11 +1,12 @@
 package user_handler
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"net/http"
 	"online-questionnaire/internal/models"
 	"online-questionnaire/internal/services"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type UserHandler struct {

@@ -2,8 +2,11 @@ package user_repo
 
 import (
 	"errors"
-	"gorm.io/gorm"
+	"fmt"
+	"online-questionnaire/internal/logger"
 	"online-questionnaire/internal/models"
+
+	"gorm.io/gorm"
 )
 
 type UserRepository struct {
@@ -23,12 +26,15 @@ func (r *UserRepository) CheckUserExists(nationalID string) (*models.User, error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// Return nil if record not found, which is expected behavior when the user doesn't exist
+			logger.GetLogger().Info("User not found", err, logger.Logctx{})
 			return nil, nil
 		}
 		// If there's another error, return it
+		logger.GetLogger().Warning("Unknown Error", err, logger.Logctx{})
 		return nil, err
 	}
 	// If user is found, return the user
+	logger.GetLogger().Info(fmt.Sprintf("Found user with national ID: %v", nationalID), nil, logger.Logctx{})
 	return &user, nil
 }
 
@@ -47,7 +53,9 @@ func (r *UserRepository) CreateUser(user *models.User) error {
 		WalletBalance: 0,
 		Role:          models.Guest,
 	}).Error; err != nil {
+		logger.GetLogger().Error(fmt.Sprintf("Couldn't create user: %v", user.NationalID), err, logger.Logctx{}, "")
 		return err
 	}
+	logger.GetLogger().Info(fmt.Sprintf("User has been created: %v", user.NationalID), nil, logger.Logctx{})
 	return nil
 }

@@ -13,7 +13,7 @@ import (
 
 func main() {
 
-	cfg, err := configs.LoadConfig("../../configs/")
+	cfg, err := configs.LoadConfig("./configs/")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -22,7 +22,7 @@ func main() {
 		log.Fatal(logErr)
 	}
 
-	logging.GetLogger().Info("Application started", "questionnaire", logging.Logctx{})
+	logging.GetLogger().Info("Application started", nil, logging.Logctx{})
 
 	app := fiber.New()
 	app.Use(logger.New())

@@ -4,17 +4,22 @@ server:
   host: localhost
   port: 8080
 DB:
-  user: admin
-  password: admin123
-  dbname: questionnaire
+  user: root
+  password: ""
+  dbname: OnlineQuestionnaire
   host: localhost
-  port: 5432
+  port: 1234
   sslmode: disable
-
-
 jwt:
-  secret: "secret"
+  secret: ""
   expiration: 5 #minutes
+logging:
+  level: DEBUG
+  filename: /tmp/application.log
+  maxsize: 10 # MB
+  maxbackups: 10
+  maxage: 30
+  compress: true
 
 
 

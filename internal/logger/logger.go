@@ -76,32 +76,32 @@ func NewLogger(cfg config.Config, service string) error {
 func GetLogger() *Logger {
 	return globalLogger
 }
-func (l *Logger) Debug(message, userID string, context Logctx) {
-	l.log(zap.DebugLevel, message, userID, context, "")
+func (l *Logger) Debug(message string, err error, context Logctx) {
+	l.log(zap.DebugLevel, message, err, context, "")
 }
 
-func (l *Logger) Info(message, userID string, context Logctx) {
-	l.log(zap.InfoLevel, message, userID, context, "")
+func (l *Logger) Info(message string, err error, context Logctx) {
+	l.log(zap.InfoLevel, message, err, context, "")
 }
 
-func (l *Logger) Warning(message, userID string, context Logctx) {
-	l.log(zap.WarnLevel, message, userID, context, "")
+func (l *Logger) Warning(message string, err error, context Logctx) {
+	l.log(zap.WarnLevel, message, err, context, "")
 }
 
-func (l *Logger) Error(message, userID string, context Logctx, traceID string) {
-	l.log(zap.ErrorLevel, message, userID, context, traceID)
+func (l *Logger) Error(message string, err error, context Logctx, traceID string) {
+	l.log(zap.ErrorLevel, message, err, context, traceID)
 }
 
-func (l *Logger) Fatal(message, userID string, context Logctx, traceID string) {
-	l.log(zap.FatalLevel, message, userID, context, traceID)
+func (l *Logger) Fatal(message string, err error, context Logctx, traceID string) {
+	l.log(zap.FatalLevel, message, err, context, traceID)
 	panic(1)
 }
 
-func (l *Logger) log(level zapcore.Level, message, userID string, context Logctx, traceID string) {
+func (l *Logger) log(level zapcore.Level, message string, err error, context Logctx, traceID string) {
 	fields := []zap.Field{
 		zap.String("service", l.service),
 		// zap.String("endpoint", l.endpoint),
-		zap.String("user_id", userID),
+		zap.Error(err),
 		zap.String("trace_id", traceID),
 		zap.Any("context", context.Data),
 	}

@@ -1,11 +1,14 @@
 package middleware
 
 import (
+	"errors"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
+	"online-questionnaire/internal/logger"
 	"online-questionnaire/internal/models"
 	"strconv"
+
+	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 func CheckPermission(db *gorm.DB, requiredPermission models.Name) fiber.Handler {
@@ -13,6 +16,7 @@ func CheckPermission(db *gorm.DB, requiredPermission models.Name) fiber.Handler 
 		// Retrieve user ID from context
 		userID, ok := c.Locals("user_id").(uint)
 		if !ok {
+			logger.GetLogger().Error(fmt.Sprintf("Authorizing user: %v", userID), errors.New("User is not Authorized"), logger.Logctx{},"")
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "User not authenticated"})
 		}
 
@@ -30,6 +34,7 @@ func CheckPermission(db *gorm.DB, requiredPermission models.Name) fiber.Handler 
 				questionnaireID, userID, requiredPermission).First(&permission).Error
 
 		if err != nil || permission.ID == 0 {
+
 			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "You do not have the necessary permissions"})
 		}
 
