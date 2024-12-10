@@ -10,6 +10,7 @@ type ResponseRepository interface {
 	GetQuestionnaireResponses(questionnaireID uint) ([]*models.Response, error)
 	GetResponseByID(responseID uint, response *models.Response) error
 	UpdateResponse(response *models.Response) error
+	GetByUserAndQuestionnaire(userID uint, questionnaireID uint) (*models.Response, error) // اضافه کردن متد جدید برای بررسی رای دادن کاربر
 }
 
 type responseRepository struct {
@@ -30,12 +31,20 @@ func (r *responseRepository) GetQuestionnaireResponses(questionnaireID uint) ([]
 	return responses, err
 }
 
-// GetResponseByID fetches a response by its ID.
+// متد جدید برای گرفتن پاسخ کاربر از یک پرسشنامه خاص
+func (r *responseRepository) GetByUserAndQuestionnaire(userID uint, questionnaireID uint) (*models.Response, error) {
+	var response models.Response
+	err := r.db.Where("user_id = ? AND questionnaire_id = ?", userID, questionnaireID).First(&response).Error
+	if err != nil {
+		return nil, err
+	}
+	return &response, nil
+}
+
 func (r *responseRepository) GetResponseByID(responseID uint, response *models.Response) error {
 	return r.db.First(response, "id = ?", responseID).Error
 }
 
-// UpdateResponse updates an existing response.
 func (r *responseRepository) UpdateResponse(response *models.Response) error {
 	return r.db.Save(response).Error
 }
