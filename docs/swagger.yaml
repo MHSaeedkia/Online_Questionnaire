@@ -3,5 +3,81 @@ info:
   description: Questionnaire Management System API
   title: online Questionnaire
   version: "1.0"
-paths: {}
-swagger: "2.0"
+
+paths:
+  /questionnaires:
+    post:
+      summary: "Create a new questionnaire"
+      description: "Allows a user to create a new questionnaire."
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Questionnaire details"
+          schema:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+              description:
+                type: "string"
+              questions:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    question_text:
+                      type: "string"
+                    question_type:
+                      type: "string"
+                      enum: ["text", "multiple_choice", "checkbox"]
+                    options:
+                      type: "array"
+                      items:
+                        type: "string"
+      responses:
+        "201":
+          description: "Questionnaire created successfully"
+        "400":
+          description: "Invalid input"
+        "500":
+          description: "Internal server error"
+
+  /questionnaires:
+    get:
+      summary: "Get list of questionnaires"
+      description: "Returns a list of all available questionnaires."
+      responses:
+        "200":
+          description: "List of questionnaires"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "integer"
+                title:
+                  type: "string"
+                description:
+                  type: "string"
+        "500":
+          description: "Internal server error"
+
+  /questionnaires/{id}:
+    delete:
+      summary: "Delete a questionnaire"
+      description: "Deletes a questionnaire by ID."
+      parameters:
+        - in: "path"
+          name: "id"
+          required: true
+          description: "ID of the questionnaire to delete"
+          type: "integer"
+      responses:
+        "204":
+          description: "Questionnaire deleted successfully"
+        "404":
+          description: "Questionnaire not found"
+        "500":
+          description: "Internal server error"
