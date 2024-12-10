@@ -2,13 +2,12 @@ package routers
 
 import (
 	"fmt"
-	"github.com/gofiber/fiber/v2"
 	"log"
 	handlers2 "online-questionnaire/api/handlers/permission_handler"
 	"online-questionnaire/api/handlers/questionnaire_handlers"
 	"online-questionnaire/api/handlers/response_handler"
 	"online-questionnaire/api/handlers/user_handler"
-	config "online-questionnaire/configs"
+	"online-questionnaire/configs"
 	"online-questionnaire/internal/db"
 	"online-questionnaire/internal/middlewares"
 	"online-questionnaire/internal/models"
@@ -18,14 +17,11 @@ import (
 	"online-questionnaire/internal/repositories/user_repo"
 	"online-questionnaire/internal/services"
 	"online-questionnaire/pkg/middleware"
+
+	"github.com/gofiber/fiber/v2"
 )
 
-func SetupRoutes(app *fiber.App) {
-	cfg, err := config.LoadConfig("./configs/")
-	if err != nil {
-		log.Fatal(err)
-	}
-
+func SetupRoutes(cfg configs.Config, app *fiber.App) {
 	//database connect
 	DB, err := db.NewConnection(&cfg.Database)
 	if err != nil {

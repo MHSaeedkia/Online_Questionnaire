@@ -2,13 +2,14 @@ package db
 
 import (
 	"fmt"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 	"online-questionnaire/configs"
 	"online-questionnaire/internal/models"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-func NewConnection(cfg *config.DatabaseConfig) (*gorm.DB, error) {
+func NewConnection(cfg *configs.DatabaseConfig) (*gorm.DB, error) {
 	//dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=%v",
 	//	cfg.Host,
 	//	cfg.User,
